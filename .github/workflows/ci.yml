@@ -14,8 +14,8 @@ jobs:
       SDL_AUDIODRIVER: dummy
       PYGAME_HIDE_SUPPORT_PROMPT: '1'
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
         with:
           python-version: '3.12'
       - name: Install the engine and independent game
@@ -47,7 +47,7 @@ jobs:
           ../../../.ci-verify/Scripts/python -m mygame --headless --frames 3
           Pop-Location
           Pop-Location
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v5
         with:
           name: checked-python-distributions
           path: dist/*
