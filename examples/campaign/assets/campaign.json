@@ -1,0 +1,19 @@
+{
+  "format": "platform2d.campaign",
+  "version": 1,
+  "name": "Operação Aurora",
+  "stages": [
+    {
+      "id": "stage-1",
+      "map": "stage-1.json"
+    },
+    {
+      "id": "stage-2",
+      "map": "stage-2.json"
+    },
+    {
+      "id": "stage-3",
+      "map": "stage-3.json"
+    }
+  ]
+}

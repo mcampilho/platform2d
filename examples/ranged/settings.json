@@ -1,0 +1,54 @@
+{
+  "bindings": {
+    "left": [
+      "left",
+      "a"
+    ],
+    "right": [
+      "right",
+      "d"
+    ],
+    "down": [
+      "down",
+      "s"
+    ],
+    "jump": [
+      "space",
+      "z"
+    ],
+    "shoot": [
+      "k",
+      "x"
+    ],
+    "restart": [
+      "r"
+    ],
+    "reset": [
+      "f2"
+    ],
+    "debug": [
+      "f1"
+    ],
+    "pause": [
+      "p"
+    ],
+    "step": [
+      "n"
+    ],
+    "use_item": [
+      "h"
+    ]
+  },
+  "movement": {
+    "speed": 210,
+    "acceleration": 1500,
+    "friction": 1900,
+    "air_control": 0.7,
+    "gravity": 1200,
+    "jump_speed": 440,
+    "jump_cut": 170,
+    "terminal_speed": 800,
+    "coyote_time": 0.1,
+    "jump_buffer": 0.12
+  }
+}

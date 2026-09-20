@@ -1,0 +1,17 @@
+import argparse,os
+
+def main():
+    parser=argparse.ArgumentParser()
+    parser.add_argument('--headless',action='store_true'); parser.add_argument('--frames',type=int)
+    args=parser.parse_args()
+    if args.headless: os.environ['SDL_VIDEODRIVER']=os.environ['SDL_AUDIODRIVER']='dummy'
+    import pygame
+    from platform2d.core.game import Game
+    from platform2d.paths import user_data_dir
+    from .scene import MyScene
+    pygame.init()
+    Game(MyScene(),{'left':['left','a'],'right':['right','d'],'jump':['space','z'],'restart':['r'],'pause':['p']},
+         title=@TITLE@,size=(960,576),muted=args.headless,
+         controls_path=user_data_dir('my-platform2d-game')/'controls.json').run(args.frames)
+
+if __name__=='__main__': main()

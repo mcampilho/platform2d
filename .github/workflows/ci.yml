@@ -1,0 +1,53 @@
+name: Validate Platform2D
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  windows:
+    runs-on: windows-latest
+    timeout-minutes: 20
+    env:
+      SDL_VIDEODRIVER: dummy
+      SDL_AUDIODRIVER: dummy
+      PYGAME_HIDE_SUPPORT_PROMPT: '1'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install the engine and independent game
+        run: python -m pip install -e . -e games/resgate build twine
+      - name: Engine tests
+        run: python -m unittest discover -s tests
+      - name: Independent game tests
+        run: python -m unittest discover -s games/resgate/tests
+      - name: Play the independent game
+        run: python -m resgate --self-test --data-dir artifacts/ci-resgate
+      - name: Verify tutorial
+        run: python tutorials/first_game/main.py --verify
+      - name: Build and validate distributions
+        run: |
+          python -m build
+          python -m twine check --strict dist/*
+      - name: Check public archives
+        run: python tools/check_public_package.py dist
+      - name: Install wheel into a fresh environment
+        shell: pwsh
+        run: |
+          python -m venv .ci-verify
+          $wheel = (Get-ChildItem dist/platform2d-*.whl).FullName
+          .ci-verify/Scripts/python -m pip install $wheel
+          New-Item -ItemType Directory -Force artifacts/ci-isolated | Out-Null
+          Push-Location artifacts/ci-isolated
+          ../../.ci-verify/Scripts/python -m platform2d new hello
+          Push-Location hello
+          ../../../.ci-verify/Scripts/python -m mygame --headless --frames 3
+          Pop-Location
+          Pop-Location
+      - uses: actions/upload-artifact@v4
+        with:
+          name: checked-python-distributions
+          path: dist/*

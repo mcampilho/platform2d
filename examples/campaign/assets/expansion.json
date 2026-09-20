@@ -1,0 +1,23 @@
+{
+  "format": "platform2d.campaign",
+  "version": 1,
+  "name": "Novos Horizontes",
+  "stages": [
+    {
+      "id": "cargo",
+      "map": "expansion-cargo.json"
+    },
+    {
+      "id": "swim",
+      "map": "expansion-swim.json"
+    },
+    {
+      "id": "escape",
+      "map": "expansion-escape.json"
+    },
+    {
+      "id": "explore",
+      "map": "expansion-explore.json"
+    }
+  ]
+}

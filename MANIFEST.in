@@ -1,0 +1,14 @@
+include LICENSE pyproject.toml
+include docs/using-platform2d.md
+recursive-include platform2d *.py *.wav *.tmpl
+prune tests
+prune examples
+prune games
+prune tutorials
+prune artifacts
+prune build
+prune .venv
+prune .release-env
+prune .sdk-verify
+prune .uv-cache
+global-exclude __pycache__ *.py[cod]

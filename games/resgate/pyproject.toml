@@ -1,0 +1,22 @@
+[build-system]
+requires = ["setuptools>=77"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "resgate-na-estacao"
+version = "1.0.0"
+description = "Um pequeno jogo independente construído com Platform2D"
+readme = "README.md"
+requires-python = ">=3.10"
+license = "MIT"
+license-files = ["LICENSE"]
+dependencies = ["platform2d==0.23.0"]
+
+[project.scripts]
+resgate = "resgate.__main__:main"
+
+[tool.setuptools.packages.find]
+include = ["resgate*"]
+
+[tool.setuptools.package-data]
+resgate = ["assets/*.json", "assets/*.ico", "assets/*.png"]

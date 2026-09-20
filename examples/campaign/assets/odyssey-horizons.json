@@ -1,0 +1,55 @@
+{
+  "format": "platform2d.campaign",
+  "version": 1,
+  "name": "Odisseia Aurora — Novos Horizontes",
+  "stages": [
+    {
+      "id": "launch",
+      "map": "odyssey-launch.json"
+    },
+    {
+      "id": "expedition-1",
+      "map": "expedition-1.json"
+    },
+    {
+      "id": "expedition-2",
+      "map": "expedition-2.json"
+    },
+    {
+      "id": "expedition-3",
+      "map": "expedition-3.json"
+    },
+    {
+      "id": "expedition-4",
+      "map": "expedition-4.json"
+    },
+    {
+      "id": "valley",
+      "map": "odyssey-valley.json"
+    },
+    {
+      "id": "palace",
+      "map": "odyssey-palace.json"
+    },
+    {
+      "id": "duel",
+      "map": "duel-courtyard.json"
+    },
+    {
+      "id": "cargo",
+      "map": "expansion-cargo.json"
+    },
+    {
+      "id": "swim",
+      "map": "expansion-swim.json"
+    },
+    {
+      "id": "escape",
+      "map": "expansion-escape.json"
+    },
+    {
+      "id": "explore",
+      "map": "expansion-explore.json"
+    }
+  ]
+}

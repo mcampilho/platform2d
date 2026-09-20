@@ -1,0 +1,11 @@
+{
+  "format": "platform2d.campaign",
+  "version": 1,
+  "name": "Fuga da Estação",
+  "stages": [
+    {
+      "id": "escape",
+      "map": "expansion-escape.json"
+    }
+  ]
+}

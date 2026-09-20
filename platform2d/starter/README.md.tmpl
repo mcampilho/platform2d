@@ -1,0 +1,13 @@
+# O teu primeiro jogo Platform2D
+
+Com o motor instalado no ambiente virtual, executa `python -m mygame` nesta pasta.
+Setas/A/D movem; Espaço/Z salta; P pausa; R recomeça. Recolhe a esfera e chega à porta.
+
+`mygame/scene.py` contém as regras. `mygame/__main__.py` configura a janela e os comandos.
+Adiciona os teus recursos ao pacote `mygame` e declara-os em `tool.setuptools.package-data`.
+Usa caminhos relativos a `__file__` ou `importlib.resources`, nunca à pasta atual do terminal.
+
+Para instalar este jogo noutro ambiente, instala primeiro a wheel oficial do motor e depois
+executa `python -m pip install .`. O nome `my-platform2d-game` é um exemplo: muda-o antes de publicar.
+As preferências ficam na pasta de dados `my-platform2d-game` do utilizador; muda também esse ID
+para cada jogo independente. O motor não obriga a publicar o teu jogo nem o seu código.

@@ -1,0 +1,24 @@
+[build-system]
+requires = ["setuptools>=77"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "platform2d"
+version = "0.23.0"
+readme = "docs/using-platform2d.md"
+license = "MIT"
+license-files = ["LICENSE"]
+description = "A small, composable Pygame platformer framework"
+requires-python = ">=3.10"
+dependencies = ["pygame==2.6.1"]
+
+[tool.setuptools.packages.find]
+include = ["platform2d*"]
+
+[tool.setuptools.package-data]
+"platform2d.audio" = ["assets/*.wav"]
+
+"platform2d" = ["starter/*.tmpl"]
+
+[project.scripts]
+platform2d = "platform2d.__main__:main"

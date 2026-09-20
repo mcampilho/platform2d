@@ -1,0 +1,23 @@
+{
+  "format": "platform2d.campaign",
+  "version": 1,
+  "name": "Expedição Aurora",
+  "stages": [
+    {
+      "id": "expedition-1",
+      "map": "expedition-1.json"
+    },
+    {
+      "id": "expedition-2",
+      "map": "expedition-2.json"
+    },
+    {
+      "id": "expedition-3",
+      "map": "expedition-3.json"
+    },
+    {
+      "id": "expedition-4",
+      "map": "expedition-4.json"
+    }
+  ]
+}

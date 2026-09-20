@@ -1,0 +1,11 @@
+{
+  "format": "platform2d.campaign",
+  "version": 1,
+  "name": "Torre Inundada",
+  "stages": [
+    {
+      "id": "swim",
+      "map": "expansion-swim.json"
+    }
+  ]
+}
