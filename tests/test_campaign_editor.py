@@ -42,7 +42,9 @@ class CampaignDocumentTests(unittest.TestCase):
 
     def test_save_as_rebases_paths_and_does_not_modify_maps(self):
         originals={s['map']:Path(s['map']).read_bytes() for s in self.doc.data['stages']}
-        with tempfile.TemporaryDirectory() as folder:
+        # Relative references require the destination and maps on the same drive.
+        # Hosted Windows runners may keep the checkout on D: and TEMP on C:.
+        with tempfile.TemporaryDirectory(dir=ASSETS) as folder:
             target=Path(folder)/'nested'/'campaign.json'; self.doc.save(target)
             loaded=CampaignDocument.load(target)
             self.assertEqual(loaded.snapshot(),self.doc.snapshot())
@@ -50,6 +52,24 @@ class CampaignDocumentTests(unittest.TestCase):
             self.assertEqual(load_campaign(target)[1],self.doc.playable()[1])
             raw=json.loads(target.read_text(encoding='utf-8'))
             self.assertTrue(all(not Path(s['map']).is_absolute() for s in raw['stages']))
+        for path,raw in originals.items(): self.assertEqual(Path(path).read_bytes(),raw)
+
+    def test_save_as_preserves_absolute_paths_when_relative_paths_are_unavailable(self):
+        originals={s['map']:Path(s['map']).read_bytes() for s in self.doc.data['stages']}
+        with tempfile.TemporaryDirectory() as folder:
+            target=Path(folder)/'nested'/'campaign.json'
+            # Reproduce os.path.relpath's cross-drive failure on any test machine.
+            with patch('platform2d.tools.campaign_model.os.path.relpath',
+                       side_effect=ValueError('path and start are on different drives')) as relative:
+                self.doc.save(target)
+            self.assertEqual(relative.call_count,len(originals))
+            raw=json.loads(target.read_text(encoding='utf-8'))
+            self.assertTrue(all(Path(s['map']).is_absolute() for s in raw['stages']))
+            self.assertEqual([Path(s['map']) for s in raw['stages']],
+                             [Path(s['map']) for s in self.doc.data['stages']])
+            self.assertEqual(CampaignDocument.load(target).snapshot(),self.doc.snapshot())
+            self.assertEqual(load_campaign(target)[1],self.doc.playable()[1])
+            self.assertFalse(self.doc.dirty)
         for path,raw in originals.items(): self.assertEqual(Path(path).read_bytes(),raw)
 
     def test_save_failure_preserves_previous_file_and_saved_state(self):
