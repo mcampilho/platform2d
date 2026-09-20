@@ -9,7 +9,7 @@ Usa Python 3.12 para reproduzir o ambiente de referência:
 
 ```powershell
 py -3.12 -m venv .venv
-.venv\Scripts\python.exe -m pip install -e .
+.venv\Scripts\python.exe -m pip install -e ".[i18n]"
 .venv\Scripts\python.exe -m unittest discover -s tests
 ```
 
@@ -32,7 +32,8 @@ O motor não importa `examples` nem `games`. As regras de um jogo ficam no seu
 projeto. Mantém desenho e simulação separados e preserva o contrato de gravação;
 se mudares esse contrato, valida ou rejeita explicitamente versões anteriores.
 
-Documentação para utilizadores: português de Portugal. Código e nomes de API:
+Consulta [internacionalização](docs/internationalization.md) para contribuir
+com traduções. Documentação atual: português de Portugal. Código e nomes de API:
 inglês, seguindo os módulos existentes. Evita alterações de formatação em
 ficheiros sem relação com a tarefa. As contribuições para o código e recursos
 originais deste projeto são feitas sob a licença MIT incluída.

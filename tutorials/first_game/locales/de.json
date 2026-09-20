@@ -1,0 +1,26 @@
+{
+  "name": "Deutsch",
+  "direction": "ltr",
+  "font": "NotoSans-Regular.ttf",
+  "messages": {
+    "window": "Platform2D — Lektion {lesson}",
+    "title": "{lesson} / {title}",
+    "lesson.1": "Fenster und Zeichnen",
+    "lesson.2": "Spielfigur und Boden",
+    "lesson.3": "Plattform und Sprung",
+    "lesson.4": "Einsammeln und Ausgang",
+    "lesson.5": "Gegner und Lebenspunkte",
+    "lesson.6": "Ein vollständiges kleines Spiel",
+    "start": "Enter: starten",
+    "won": "Geschafft! R: neu starten",
+    "paused": "Pause · P: fortsetzen",
+    "controls": "A/D oder Pfeiltasten: bewegen · Leertaste: springen · P: Pause · R: Neustart",
+    "health": "Leben: {current}/{maximum}",
+    "language": "F4: Sprache · {name}",
+    "audio.off": "Ton stummgeschaltet",
+    "audio.unavailable": "Ton nicht verfügbar",
+    "audio.volume": "Ton: {volume}%",
+    "audio.keys": "F10: stumm · F11/F12: Lautstärke",
+    "language.unsaved": "Sprache konnte nicht gespeichert werden."
+  }
+}

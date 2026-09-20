@@ -35,6 +35,8 @@ que já esteja disponível no PyPI.
 ## Aprender e experimentar
 
 - [Primeiro jogo: seis lições executáveis](docs/first-game-tutorial.md).
+- [Tutorial em oito idiomas e internacionalização](docs/internationalization.md).
+- [Internacionalizar um jogo criado com a framework](docs/localizing-your-game.md).
 - [Como funciona o jogo independente](docs/learning-independent-game.md).
 - [Instalação e API do motor](docs/using-platform2d.md).
 - [Histórico das entregas, exemplos e controlos](docs/project-history.md).

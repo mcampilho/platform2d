@@ -2,6 +2,8 @@
 
 O objetivo é compreender cada responsabilidade antes de acrescentar a seguinte.
 As seis lições são executáveis e cumulativas; a última é um pequeno jogo completo.
+O tutorial tem oito idiomas: **F4** muda de idioma. Consulta o
+[guia de internacionalização](internationalization.md) para traduzir os textos.
 
 ## Preparação
 
@@ -9,12 +11,12 @@ Instala Python 3.12, extrai o código do projeto e abre o terminal na sua raiz:
 
 ```powershell
 py -3.12 -m venv .venv
-.venv\Scripts\python.exe -m pip install -e .
+.venv\Scripts\python.exe -m pip install -e ".[i18n]"
 .venv\Scripts\python.exe tutorials/first_game/main.py --lesson 1
 ```
 
-Se recebeste apenas a wheel, instala-a com pip em vez de `-e .` e copia a pasta
-do tutorial para onde quiseres. O tutorial não precisa dos exemplos da Aurora.
+Para esta fase multilingue, usa o código atual do repositório: o SDK 0.23.0
+anterior ainda não a inclui. O tutorial não precisa dos exemplos da Aurora.
 
 ## Lição 1 — abrir uma janela
 

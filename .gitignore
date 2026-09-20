@@ -12,6 +12,8 @@ preferences/
 
 .sdk-verify/
 .ci-verify/
+.i18n-verify/
+.venv-resgate*/
 .env
 .env.*
 .pypirc

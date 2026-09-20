@@ -1,6 +1,8 @@
 include LICENSE pyproject.toml
 include docs/using-platform2d.md
 recursive-include platform2d *.py *.wav *.tmpl
+recursive-include platform2d/locales *.json
+recursive-include platform2d/fonts *.ttf *.otf *.txt *.json *.md
 prune tests
 prune examples
 prune games

@@ -6,11 +6,14 @@ build-backend = "setuptools.build_meta"
 name = "platform2d"
 version = "0.23.0"
 readme = "docs/using-platform2d.md"
-license = "MIT"
-license-files = ["LICENSE"]
+license = "MIT AND OFL-1.1"
+license-files = ["LICENSE", "platform2d/fonts/OFL-*.txt"]
 description = "A small, composable Pygame platformer framework"
 requires-python = ">=3.10"
 dependencies = ["pygame==2.6.1"]
+
+[project.optional-dependencies]
+i18n = ["arabic-reshaper==3.0.0", "python-bidi==0.6.6"]
 
 [tool.setuptools.packages.find]
 include = ["platform2d*"]
@@ -18,7 +21,7 @@ include = ["platform2d*"]
 [tool.setuptools.package-data]
 "platform2d.audio" = ["assets/*.wav"]
 
-"platform2d" = ["starter/*.tmpl"]
+"platform2d" = ["starter/*.tmpl", "locales/*.json", "fonts/*.ttf", "fonts/*.otf", "fonts/*.txt", "fonts/*.json", "fonts/*.md"]
 
 [project.scripts]
 platform2d = "platform2d.__main__:main"

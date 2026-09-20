@@ -12,6 +12,10 @@ Pygame e as suas dependências conservam as respetivas licenças; a licença MIT
 do motor não as substitui. [Texto oficial MIT](https://opensource.org/license/mit)
 e [licença do Pygame](https://github.com/pygame/pygame/blob/2.6.1/README.rst#license).
 
+As fontes Noto incluídas para a interface multilingue usam OFL-1.1; conserva
+os avisos em `platform2d/fonts/OFL-*.txt`. O código continua MIT. Os metadados
+do pacote indicam ambas as licenças porque a wheel contém também as fontes.
+
 ## Instalar a distribuição fornecida
 
 Recomenda-se **Python 3.12 de 64 bits** para reproduzir o ambiente testado no

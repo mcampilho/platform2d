@@ -1,0 +1,26 @@
+{
+  "name": "العربية",
+  "direction": "rtl",
+  "font": "NotoNaskhArabic-Regular.ttf",
+  "messages": {
+    "window": "Platform2D — الدرس {lesson}",
+    "title": "{lesson} / {title}",
+    "lesson.1": "النافذة والرسم",
+    "lesson.2": "الشخصية والأرض",
+    "lesson.3": "المنصة والقفز",
+    "lesson.4": "جمع العنصر والوصول إلى المخرج",
+    "lesson.5": "العدو والصحة",
+    "lesson.6": "لعبة صغيرة متكاملة",
+    "start": "Enter: ابدأ",
+    "won": "اكتملت اللعبة! R: أعد البدء",
+    "paused": "متوقف مؤقتا · P: متابعة",
+    "controls": "A/D أو الأسهم: حركة · Space: قفز · P: إيقاف مؤقت · R: إعادة البدء",
+    "health": "الصحة: {current}/{maximum}",
+    "language": "F4: اللغة · {name}",
+    "audio.off": "الصوت مكتوم",
+    "audio.unavailable": "الصوت غير متاح",
+    "audio.volume": "مستوى الصوت: {volume}%",
+    "audio.keys": "F10: كتم الصوت · F11/F12: مستوى الصوت",
+    "language.unsaved": "تعذر حفظ اللغة."
+  }
+}

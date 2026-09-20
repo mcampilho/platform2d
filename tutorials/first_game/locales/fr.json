@@ -1,0 +1,26 @@
+{
+  "name": "Français",
+  "direction": "ltr",
+  "font": "NotoSans-Regular.ttf",
+  "messages": {
+    "window": "Platform2D — Leçon {lesson}",
+    "title": "{lesson} / {title}",
+    "lesson.1": "Fenêtre et dessin",
+    "lesson.2": "Personnage et sol",
+    "lesson.3": "Plateforme et saut",
+    "lesson.4": "Objet à ramasser et sortie",
+    "lesson.5": "Ennemi et santé",
+    "lesson.6": "Un petit jeu complet",
+    "start": "Entrée : commencer",
+    "won": "Terminé ! R : recommencer",
+    "paused": "Pause · P : reprendre",
+    "controls": "A/D ou flèches : déplacement · Espace : saut · P : pause · R : recommencer",
+    "health": "Santé : {current}/{maximum}",
+    "language": "F4 : langue · {name}",
+    "audio.off": "Son coupé",
+    "audio.unavailable": "Son indisponible",
+    "audio.volume": "Son : {volume}%",
+    "audio.keys": "F10 : couper le son · F11/F12 : volume",
+    "language.unsaved": "Impossible d’enregistrer la langue."
+  }
+}

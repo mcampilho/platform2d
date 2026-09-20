@@ -1,5 +1,19 @@
 # Histórico de versões
 
+## Em desenvolvimento
+
+- Resgate completo em oito idiomas, com catálogos externos e fontes instaláveis.
+- Painel comum e áudio traduzidos; colunas RTL, mensagens de validação e ajuda com teclas reais.
+- Verificação de todos os setores e menus, cobertura de caracteres e gravações entre idiomas.
+- O código mantém MIT; as fontes Noto incluídas usam OFL-1.1.
+
+- Tutorial em pt-PT, en, es, fr, de, zh-Hans, ar e ja; F4 muda e guarda o idioma.
+- Catálogos UTF-8 por jogo, validação de parâmetros e texto de reserva.
+- Fontes Noto no tutorial, árabe bidirecional e alinhamento à direita.
+- Verificação dos oito idiomas no CI.
+- `Game`/`ControlsPanel` aceitam um idioma para os rótulos dos comandos.
+- Ainda não publicado; os ZIPs 0.23.0 anteriores não incluem esta fase.
+
 ## 0.23.0 — primeira distribuição pública preparada
 
 - Licença MIT e pacote Python instalável com recursos incluídos.

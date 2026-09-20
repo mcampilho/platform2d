@@ -3,6 +3,7 @@ from importlib import resources
 from math import isfinite
 
 import pygame
+from platform2d.i18n import InterfaceText
 
 EFFECTS = ("jump","land","pickup","checkpoint","hurt","attack","hit","dash",
            "door","switch","blocked","victory","save","load","error","shoot")
@@ -116,7 +117,8 @@ class Audio:
 
 class AudioControls:
     """Reusable host-level shortcuts and a short visual status message."""
-    def __init__(self,audio):
+    def __init__(self,audio,language='pt-PT'):
+        self.locale=InterfaceText(language)
         self.audio = audio
         self.remaining = 4.0
         self.keys = set()
@@ -150,9 +152,8 @@ class AudioControls:
     def draw(self,surface):
         if self.remaining <= 0:
             return
-        status = "SOM INDISPONÍVEL" if not self.audio.available else "SOM DESLIGADO" if self.audio.muted else f"SOM {self.audio.volume:.0%}"
-        font = pygame.font.SysFont("consolas",13)
-        text = font.render(status+"  |  F10: silêncio  F11/F12: volume",True,(179,233,219))
+        status = self.locale.t('audio.unavailable') if not self.audio.available else self.locale.t('audio.off') if self.audio.muted else self.locale.t('audio.volume',volume=round(self.audio.volume*100))
+        text = self.locale.render(status+' | '+self.locale.t('audio.keys'),13,(179,233,219),surface.get_width()-48)
         rect = text.get_rect(bottomright=(surface.get_width()-16,surface.get_height()-43)).inflate(16,14)
         pygame.draw.rect(surface,(12,28,40),rect,border_radius=5)
         surface.blit(text,(rect.x+8,rect.y+7))

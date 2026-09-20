@@ -8,6 +8,7 @@ OUT=ROOT/'artifacts/releases'
 def add_tree(zipfile_,source,prefix,extensions=None):
     for p in sorted(source.rglob('*')):
         if not p.is_file() or '__pycache__' in p.parts or any(part.endswith('.egg-info') for part in p.parts): continue
+        if any(part in {'build', 'dist'} for part in p.parts): continue
         if extensions and p.suffix not in extensions: continue
         zipfile_.write(p,str(Path(prefix)/p.relative_to(source)))
 
@@ -31,15 +32,15 @@ def main():
         prefix='Platform2D-SDK-0.23.0'
         for name in ('platform2d-0.23.0-py3-none-any.whl','resgate_na_estacao-1.0.0-py3-none-any.whl'):
             z.write(ROOT/'artifacts/dist'/name,f'{prefix}/wheels/{name}')
-        for name in ('using-platform2d.md','distributing-platform2d.md','learning-independent-game.md', 'first-game-tutorial.md', 'second-computer-test.md', 'publishing-github-pypi.md'):
+        for name in ('using-platform2d.md','distributing-platform2d.md','learning-independent-game.md', 'first-game-tutorial.md', 'internationalization.md', 'localizing-your-game.md', 'second-computer-test.md', 'publishing-github-pypi.md'):
             z.write(ROOT/'docs'/name,f'{prefix}/docs/{name}')
         z.write(ROOT/'LICENSE',f'{prefix}/LICENSE')
         z.write(ROOT/'docs/using-platform2d.md',f'{prefix}/LEIA-ME.md')
-        add_tree(z,ROOT/'platform2d',f'{prefix}/engine-source/platform2d',{'.py','.tmpl','.wav'})
+        add_tree(z,ROOT/'platform2d',f'{prefix}/engine-source/platform2d',{'.py','.tmpl','.wav','.json','.ttf','.otf','.txt','.md'})
         z.write(ROOT/'pyproject.toml',f'{prefix}/engine-source/pyproject.toml')
         z.write(ROOT/'LICENSE',f'{prefix}/engine-source/LICENSE')
         z.write(ROOT/'MANIFEST.in',f'{prefix}/engine-source/MANIFEST.in')
-        add_tree(z,ROOT/'tutorials/first_game',f'{prefix}/tutorials/first_game',{'.py','.md'})
+        add_tree(z,ROOT/'tutorials/first_game',f'{prefix}/tutorials/first_game',{'.py','.md','.json','.ttf','.otf','.txt'})
         z.write(ROOT/'docs/using-platform2d.md',f'{prefix}/engine-source/docs/using-platform2d.md')
         # Explicit game sources, not its local build/egg-info directories.
         add_tree(z,ROOT/'games/resgate/resgate',f'{prefix}/resgate-source/resgate',{'.py','.json','.ico','.png'})

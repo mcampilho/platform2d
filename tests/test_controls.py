@@ -38,6 +38,36 @@ class ControlsTests(unittest.TestCase):
         self.temp = tempfile.TemporaryDirectory()
         self.path = Path(self.temp.name)/"classic.controls.json"
 
+    def test_panel_accepts_language_without_changing_bindings(self):
+        panel = ControlsPanel(BINDINGS, language="en")
+        self.assertEqual(panel.label("jump"), "Space")
+        self.assertEqual(panel.labels["left"], "Left")
+        panel.close()
+
+    def test_language_change_keeps_bindings_and_mouse_cells_match_rtl(self):
+        panel=ControlsPanel(BINDINGS,language='ar')
+        panel.toggle();panel.draw(pygame.Surface((960,576)))
+        cell,row,column=panel.cells[0]
+        panel.handle_event(pygame.event.Event(pygame.MOUSEBUTTONDOWN,button=1,pos=cell.center))
+        self.assertEqual((panel.row,panel.column),(row,column))
+        self.assertTrue(panel.capture)
+        before=panel.draft.copy()
+        panel.set_language('ja')
+        self.assertFalse(panel.capture)
+        self.assertEqual(panel.draft,before)
+        panel.draw(pygame.Surface((960,576)))
+        panel.close()
+
+    def test_hint_contains_only_available_actions(self):
+        panel=ControlsPanel({'jump':['space']},language='en')
+        with patch.object(panel.locale,'box',wraps=panel.locale.box) as drawn:
+            panel.draw_hint(pygame.Surface((960,576)))
+        text=drawn.call_args.args[1]
+        self.assertIn('jump',text)
+        self.assertNotIn('shoot',text)
+        self.assertNotIn('pause',text)
+        panel.close()
+
     def tearDown(self):
         pygame.quit()
         self.temp.cleanup()

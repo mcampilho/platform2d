@@ -2,6 +2,7 @@
 import json,os,tempfile
 from pathlib import Path
 import pygame
+from platform2d.i18n import Translator, TextRenderer, FONT_FOLDER
 from platform2d.actors.character import Character
 from platform2d.actors.controller import ArcadeController,Movement
 from platform2d.actors.exploration import SwimController
@@ -19,15 +20,20 @@ ASSETS=Path(__file__).parent/'assets'
 
 
 class RescueGame:
-    def __init__(self,data_dir):
+    def __init__(self,data_dir,language='pt-PT'):
+        self.translator=Translator(Path(__file__).parent/'locales',language)
+        self.language=self.translator.language
+        self.renderer=TextRenderer(self.translator,FONT_FOLDER)
         self.data_dir=Path(data_dir); self.save_path=self.data_dir/'progress.json'
         self.maps=[json.loads((ASSETS/name).read_text(encoding='utf-8')) for name in ('dock.json','reservoir.json','escape.json')]
         self.signature=fingerprint(dict(maps=self.maps,rules='rescue-1'))
         self.audio=SilentAudio(); self.menu='title'; self.selected=0; self.notice=''; self.notice_time=0
-        self.font=pygame.font.SysFont('segoeui',20); self.small=pygame.font.SysFont('consolas',15)
-        self.title=pygame.font.SysFont('segoeui',43,bold=True)
+        self.font=20; self.small=15; self.title=40
         self.world=pygame.Surface((1920,960),pygame.SRCALPHA); self.viewport=pygame.Surface((960,480))
         self.new_game(); self.menu='title'
+
+    def t(self,key,**values):
+        return self.translator.text(key,**values)
 
     @property
     def paused(self): return self.menu is not None
@@ -65,9 +71,9 @@ class RescueGame:
             self.data_dir.mkdir(parents=True,exist_ok=True)
             with tempfile.NamedTemporaryFile(mode='w',encoding='utf-8',dir=self.data_dir,delete=False,suffix='.tmp') as f:
                 temporary=Path(f.name); json.dump(self.snapshot(),f,ensure_ascii=False,allow_nan=False); f.flush(); os.fsync(f.fileno())
-            os.replace(temporary,self.save_path); self.say('Progresso guardado.')
+            os.replace(temporary,self.save_path); self.say(self.t('saved'))
             return True
-        except OSError as error: self.say('Não foi possível guardar: '+str(error)); return False
+        except OSError as error: self.last_error=str(error); self.say(self.t('save_failed')); return False
         finally:
             if temporary and temporary.exists(): temporary.unlink()
 
@@ -86,9 +92,9 @@ class RescueGame:
             self.index=d['index']; self.start_stage(); self.checkpoint=d['checkpoint']; self.collected=set(d['collected'])
             self.deaths=d['deaths']; self.elapsed=d['elapsed']; self.stage_won=d['stage_won']; self.finished=d['finished']; self.respawn()
             self.menu='ending' if self.finished else 'stage' if self.stage_won else None
-            self.say('Retomado no checkpoint.'); return True
+            self.say(self.t('resumed')); return True
         except (OSError,ValueError,TypeError,KeyError,OverflowError) as error:
-            self.say('Não foi possível carregar: '+str(error)); return False
+            self.last_error=str(error); self.say(self.t('load_failed')); return False
 
     def freeze(self):
         b=self.player.body; b.previous_x,b.previous_y=b.x,b.y
@@ -148,7 +154,7 @@ class RescueGame:
         for o in self.level.objects:
             if not self.box(o).overlaps(b.box): continue
             if o['type']=='coin' and o['id'] not in self.collected:
-                self.collected.add(o['id']); self.audio.play('pickup'); self.say('Equipamento recuperado.' if self.index==0 else 'Válvula de emergência ativada.')
+                self.collected.add(o['id']); self.audio.play('pickup'); self.say(self.t('equipment') if self.index==0 else self.t('valve'))
             if o['type']=='checkpoint' and o['id']!=self.checkpoint:
                 self.checkpoint=o['id']; self.audio.play('checkpoint'); self.save()
             if o['type']=='goal' and all(c['id'] in self.collected for c in self.level.objects if c['type']=='coin'):
@@ -156,8 +162,15 @@ class RescueGame:
         self.camera.follow(b,dt)
         if self.index==2: self.camera.x=min(self.level.width-960,max(self.camera.x,self.frontier+self.chase*65))
 
-    def text(self,surface,text,x,y,color=(216,233,240),font=None):
-        surface.blit((font or self.font).render(text,True,color),(x,y))
+    def key(self,action):
+        return getattr(self,'control_label',lambda action:BINDINGS[action][0].upper())(action)
+
+    def text(self,surface,text,x,y,color=(216,233,240),font=None,width=None):
+        width=width or max(80,surface.get_width()-int(x)-28)
+        image=self.renderer.render(text,color,font or self.font,width)
+        if surface is not self.world and self.translator.metadata['direction']=='rtl':
+            x=surface.get_width()-x-image.get_width()
+        surface.blit(image,(x,y))
 
     def draw(self,surface,alpha):
         x,y=self.camera.interpolated(alpha); self.world.fill((0,0,0,0))
@@ -169,11 +182,11 @@ class RescueGame:
             r=self.box(o); rect=pygame.Rect(r.x,r.y,r.w,r.h)
             if o['type']=='water':
                 tint=pygame.Surface(rect.size,pygame.SRCALPHA); tint.fill((37,137,194,80)); self.world.blit(tint,rect)
-            elif o['type']=='air': pygame.draw.ellipse(self.world,(169,236,244),rect,2); self.text(self.world,'AR',r.x+8,r.y+8,font=self.small)
+            elif o['type']=='air': pygame.draw.ellipse(self.world,(169,236,244),rect,2); self.text(self.world,self.t('air'),r.x+8,r.y+8,font=self.small)
             elif o['type']=='coin' and o['id'] not in self.collected:
                 pygame.draw.rect(self.world,(255,193,95),rect,3,border_radius=4); self.text(self.world,'+',r.x+5,r.y,font=self.font)
             elif o['type']=='goal':
-                pygame.draw.rect(self.world,(125,231,195),rect,3,border_radius=8); self.text(self.world,'SAÍDA',r.x-5,r.y-24,font=self.small)
+                pygame.draw.rect(self.world,(125,231,195),rect,3,border_radius=8); self.text(self.world,self.t('exit'),r.x-5,r.y-24,font=self.small)
             elif o['type']=='checkpoint':
                 pygame.draw.line(self.world,(159,231,236),rect.bottomleft,rect.topleft,3); pygame.draw.polygon(self.world,(159,231,236),[rect.topleft,(r.x+24,r.y+7),(r.x,r.y+14)])
         px,py=self.player.body.interpolated(alpha)
@@ -184,32 +197,33 @@ class RescueGame:
         pygame.draw.line(self.world,(230,241,235),(px+19,py+26),(px+21,py+30),4)
         self.viewport.blit(self.world,(-round(x),-round(y)))
         surface.fill((9,18,29)); surface.blit(self.viewport,(0,96))
-        self.text(surface,f'RESGATE / {self.index+1:02d}   {self.level.name}',26,12,(147,231,211),self.font)
-        hint=('Recupera os dois equipamentos e chega à saída.','Saltar / Cima: nadar · Baixo: mergulhar · procura AR.','Corre para a nave. A ameaça aproxima-se pela esquerda.')[self.index]
+        self.text(surface,f'{self.t("game_title")} / {self.index+1:02d}',26,12,(147,231,211),self.font,width=650)
+        hint=self.t('hint'+str(self.index),jump=self.key('jump'),up=self.key('up'),down=self.key('down'))
         self.text(surface,hint,26,45,font=self.small)
-        status=f'OXIGÉNIO {self.oxygen:04.1f}s' if self.index==1 else f'AMEAÇA A {max(0,int(self.player.body.x-self.frontier-self.chase*65))}' if self.index==2 else f'EQUIPAMENTO {len(self.collected)}/2'
+        status=self.t('oxygen',value=f'{self.oxygen:04.1f}') if self.index==1 else self.t('threat',distance=max(0,int(self.player.body.x-self.frontier-self.chase*65))) if self.index==2 else self.t('equipment_status',count=len(self.collected))
         self.text(surface,status,710,15,(255,206,139),self.small)
-        self.text(surface,'P: pausa · F6: guardar · F9: carregar · R: checkpoint',26,73,font=self.small)
+        self.text(surface,self.t('shortcuts',pause=self.key('pause'),save=self.key('save_progress'),load=self.key('load_progress'),restart=self.key('restart')),26,73,font=self.small)
         if self.index==2:
             edge=round(self.frontier+self.chase*65-x)
             if 0<=edge<960: pygame.draw.rect(surface,(235,113,124),(edge,96,8,480))
         if self.menu:
             shade=pygame.Surface((960,576),pygame.SRCALPHA); shade.fill((3,12,23,225)); surface.blit(shade,(0,0))
             if self.menu=='title':
-                self.text(surface,'RESGATE NA ESTAÇÃO',80,90,(236,243,235),self.title)
-                self.text(surface,'Três setores. Uma equipa à espera. Uma última nave.',82,155)
-                for i,label in enumerate(('Nova missão','Continuar','Comandos (F3)','Sair')):
-                    pygame.draw.rect(surface,(30,87,88) if i==self.selected else (20,35,50),(80,224+i*52,520,43),border_radius=8)
-                    self.text(surface,label,100,231+i*52)
-                self.text(surface,'Setas e Enter · Platform2D · edição 1.0',82,464,font=self.small)
+                self.text(surface,self.t('game_title'),80,90,(236,243,235),self.title)
+                self.text(surface,self.t('tagline'),82,155)
+                for i,label in enumerate((self.t('new_game'),self.t('continue'),self.t('controls'),self.t('quit'))):
+                    pygame.draw.rect(surface,(30,87,88) if i==self.selected else (20,35,50),(360 if self.translator.metadata['direction']=='rtl' else 80,224+i*52,520,43),border_radius=8)
+                    self.text(surface,label,100,231+i*52,width=480)
+                footer=self.t('footer',confirm=self.key('continue'))
+                self.text(surface,footer,82,464,font=self.small)
             else:
-                titles={'briefing':self.level.name,'stage':'Setor concluído','ending':'Toda a equipa está a salvo.','pause':'Missão em pausa','confirm_new':'Começar uma missão nova?','confirm_load':'Retomar a gravação?'}
+                titles={'briefing':self.t('level'+str(self.index)),'stage':self.t('sector'),'ending':self.t('ending'),'pause':self.t('pause'),'confirm_new':self.t('new'),'confirm_load':self.t('load')}
                 self.text(surface,titles[self.menu],64,160,(236,243,235),self.title)
-                briefing=('O cais perdeu energia. Recupera o equipamento de emergência.','O reservatório inundou. Ativa as válvulas e encontra a passagem.','A evacuação começou. Chega à nave antes da frente de calor.')[self.index]
-                message=briefing if self.menu=='briefing' else f'Resgate concluído em {self.elapsed:.1f}s · {self.deaths} reaparecimentos.' if self.menu=='ending' else 'O próximo setor precisa de ti.' if self.menu=='stage' else 'F6 guarda. F9 carrega. P ou Enter retoma.' if self.menu=='pause' else 'Enter confirma; P cancela. O progresso atual será substituído.'
+                briefing=self.t('briefing'+str(self.index))
+                message=briefing if self.menu=='briefing' else self.t('summary',time=f'{self.elapsed:.1f}',deaths=self.deaths) if self.menu=='ending' else self.t('next_sector') if self.menu=='stage' else self.t('pause_help',save=self.key('save_progress'),load=self.key('load_progress'),pause=self.key('pause'),confirm=self.key('continue')) if self.menu=='pause' else self.t('confirm_help',confirm=self.key('continue'),pause=self.key('pause'))
                 self.text(surface,message,64,250)
-                self.text(surface,'Enter: continuar',64,328,(148,230,210))
-                if self.menu=='ending': self.text(surface,'Código e arte: Miguel / colaboradores Platform2D · Pygame',64,405,font=self.small)
+                self.text(surface,self.t('continue_help',confirm=self.key('continue')),64,328,(148,230,210))
+                if self.menu=='ending': self.text(surface,self.t('credits'),64,405,font=self.small)
         if self.notice_time:
             pygame.draw.rect(surface,(17,37,50),(16,526,928,34),border_radius=5)
-            self.text(surface,self.notice[:104],28,533,(255,212,143),self.small)
+            self.text(surface,self.notice,28,533,(255,212,143),self.small)

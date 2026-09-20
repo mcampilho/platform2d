@@ -1,0 +1,26 @@
+{
+  "name": "Español",
+  "direction": "ltr",
+  "font": "NotoSans-Regular.ttf",
+  "messages": {
+    "window": "Platform2D — Lección {lesson}",
+    "title": "{lesson} / {title}",
+    "lesson.1": "Ventana y dibujo",
+    "lesson.2": "Personaje y suelo",
+    "lesson.3": "Plataforma y salto",
+    "lesson.4": "Recogida y salida",
+    "lesson.5": "Enemigo y salud",
+    "lesson.6": "Un pequeño juego completo",
+    "start": "Enter: empezar",
+    "won": "¡Completado! R: reiniciar",
+    "paused": "Pausa · P: continuar",
+    "controls": "A/D o flechas: mover · Espacio: saltar · P: pausa · R: reiniciar",
+    "health": "Salud: {current}/{maximum}",
+    "language": "F4: idioma · {name}",
+    "audio.off": "Sonido silenciado",
+    "audio.unavailable": "Sonido no disponible",
+    "audio.volume": "Sonido: {volume}%",
+    "audio.keys": "F10: silenciar · F11/F12: volumen",
+    "language.unsaved": "No se pudo guardar el idioma."
+  }
+}

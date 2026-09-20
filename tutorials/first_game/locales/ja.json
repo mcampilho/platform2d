@@ -1,0 +1,26 @@
+{
+  "name": "日本語",
+  "direction": "ltr",
+  "font": "NotoSansCJKjp-Regular.otf",
+  "messages": {
+    "window": "Platform2D — レッスン{lesson}",
+    "title": "{lesson} / {title}",
+    "lesson.1": "ウィンドウと描画",
+    "lesson.2": "キャラクターと地面",
+    "lesson.3": "足場とジャンプ",
+    "lesson.4": "アイテム収集と出口",
+    "lesson.5": "敵と体力",
+    "lesson.6": "小さなゲームの完成",
+    "start": "Enter：スタート",
+    "won": "クリア！ R：最初から",
+    "paused": "一時停止 · P：再開",
+    "controls": "A/D または矢印キー：移動 · スペース：ジャンプ · P：一時停止 · R：最初から",
+    "health": "体力：{current}/{maximum}",
+    "language": "F4：言語 · {name}",
+    "audio.off": "消音中",
+    "audio.unavailable": "音声を利用できません",
+    "audio.volume": "音量：{volume}%",
+    "audio.keys": "F10：消音 · F11/F12：音量",
+    "language.unsaved": "言語設定を保存できませんでした。"
+  }
+}

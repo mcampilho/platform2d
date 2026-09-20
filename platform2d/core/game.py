@@ -8,18 +8,25 @@ from platform2d.tools.controls_panel import ControlsPanel
 class Game:
     FIXED_DT = 1 / 60
 
-    def __init__(self, scene: Scene, bindings, size=(960, 540), title="Platform2D", *, volume=.45, muted=False, controls_profile="custom", controls_path=None):
+    def __init__(self, scene: Scene, bindings, size=(960, 540), title="Platform2D", *, volume=.45, muted=False, controls_profile="custom", controls_path=None, language="pt-PT"):
         pygame.init()
         self.screen = pygame.display.set_mode(size)
         pygame.display.set_caption(title)
         self.scene = scene
         self.audio = Audio(volume,muted)
-        self.audio_controls = AudioControls(self.audio)
+        self.audio_controls = AudioControls(self.audio,language)
         self.scene.audio = self.audio
-        self.controls = ControlsPanel(bindings,controls_profile,controls_path)
+        self.controls = ControlsPanel(bindings,controls_profile,controls_path,language)
         self.scene.format_controls = self.controls.format_hint
         self.scene.open_controls = self.controls.toggle
+        self.scene.control_label = self.controls.label
+        self.scene.set_host_language = self.set_language
         self.input = self.controls.input
+
+    def set_language(self,language):
+        """Update shared overlays; the scene owns its own text catalogue."""
+        self.controls.set_language(language)
+        self.audio_controls.locale.translator.select(language)
 
     def run(self, max_frames=None, screenshot=None):
         clock = pygame.time.Clock()

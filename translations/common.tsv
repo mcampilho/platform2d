@@ -1,0 +1,81 @@
+# key, pt-PT, en, es, fr, de, zh-Hans, ar, ja
+action.left	Esquerda	Left	Izquierda	Gauche	Links	左	يسار	左
+action.right	Direita	Right	Derecha	Droite	Rechts	右	يمين	右
+action.up	Subir	Up	Subir	Monter	Hoch	上	أعلى	上
+action.down	Descer	Down	Bajar	Descendre	Runter	下	أسفل	下
+action.jump	Saltar	Jump	Saltar	Sauter	Springen	跳跃	قفز	ジャンプ
+action.dash	Dash	Dash	Impulso	Ruée	Sprint	冲刺	اندفاع	ダッシュ
+action.guard	Defender	Guard	Defender	Parer	Abwehren	防御	دفاع	防御
+action.attack	Atacar	Attack	Atacar	Attaquer	Angreifen	攻击	هجوم	攻撃
+action.shoot	Disparar	Shoot	Disparar	Tirer	Schießen	射击	إطلاق النار	射撃
+action.use_item	Usar kit	Use kit	Usar botiquín	Utiliser le kit	Set verwenden	使用工具包	استخدام العدة	キットを使う
+action.continue	Continuar	Continue	Continuar	Continuer	Weiter	继续	متابعة	続ける
+action.interact	Interagir	Interact	Interactuar	Interagir	Interagieren	互动	تفاعل	調べる
+action.restart	Checkpoint	Checkpoint	Punto de control	Point de contrôle	Kontrollpunkt	检查点	نقطة الحفظ	チェックポイント
+action.reset	Recomeçar	Restart	Reiniciar	Recommencer	Neustart	重新开始	إعادة البدء	最初から
+action.debug	Diagnóstico	Diagnostics	Diagnóstico	Diagnostic	Diagnose	诊断	تشخيص	診断
+action.pause	Pausa	Pause	Pausa	Pause	Pause	暂停	إيقاف مؤقت	一時停止
+action.step	Avançar um passo	Step forward	Avanzar un paso	Avancer d’un pas	Einzelschritt	单步前进	تقدم خطوة	1ステップ進む
+action.save_progress	Guardar progresso	Save progress	Guardar progreso	Sauvegarder	Fortschritt speichern	保存进度	حفظ التقدم	進行状況を保存
+action.load_progress	Carregar progresso	Load progress	Cargar progreso	Charger	Fortschritt laden	读取进度	تحميل التقدم	進行状況を読込
+key.space	Espaço	Space	Espacio	Espace	Leertaste	空格	المسافة	スペース
+key.left	Esquerda	Left	Izquierda	Gauche	Links	左	يسار	左
+key.right	Direita	Right	Derecha	Droite	Rechts	右	يمين	右
+key.up	Cima	Up	Arriba	Haut	Hoch	上	أعلى	上
+key.down	Baixo	Down	Abajo	Bas	Runter	下	أسفل	下
+key.left_shift	Shift esq.	Left Shift	Shift izq.	Maj gauche	Umschalt links	左 Shift	Shift الأيسر	左 Shift
+key.right_shift	Shift dir.	Right Shift	Shift der.	Maj droite	Umschalt rechts	右 Shift	Shift الأيمن	右 Shift
+key.left_ctrl	Ctrl esq.	Left Ctrl	Ctrl izq.	Ctrl gauche	Strg links	左 Ctrl	Ctrl الأيسر	左 Ctrl
+key.right_ctrl	Ctrl dir.	Right Ctrl	Ctrl der.	Ctrl droite	Strg rechts	右 Ctrl	Ctrl الأيمن	右 Ctrl
+profile.campaign_editor	Teste de campanha	Campaign test	Prueba de campaña	Test de campagne	Kampagnentest	战役测试	اختبار الحملة	キャンペーンテスト
+profile.classic	Clássico	Classic	Clásico	Classique	Klassisch	经典	كلاسيكي	クラシック
+profile.rooms	Salas	Rooms	Salas	Salles	Räume	房间	الغرف	部屋
+profile.precision	Precisão	Precision	Precisión	Précision	Präzision	精准	الدقة	精密操作
+profile.sentinels	Sentinelas	Sentinels	Centinelas	Sentinelles	Wächter	哨兵	الحراس	番兵
+profile.ranged	Combate	Combat	Combate	Combat	Kampf	战斗	القتال	戦闘
+profile.campaign	Campanha	Campaign	Campaña	Campagne	Kampagne	战役	الحملة	キャンペーン
+profile.adventure	Aventura	Adventure	Aventura	Aventure	Abenteuer	冒险	المغامرة	冒険
+profile.custom	Personalizado	Custom	Personalizado	Personnalisé	Benutzerdefiniert	自定义	مخصص	カスタム
+header	COMANDOS	CONTROLS	CONTROLES	COMMANDES	STEUERUNG	操作设置	التحكم	操作設定
+hint	F3: comandos	F3: controls	F3: controles	F3 : commandes	F3: Steuerung	F3：操作设置	F3: التحكم	F3：操作設定
+select	Setas / Tab: selecionar · Enter: alterar · Delete: limpar · Esc: cancelar	Arrows / Tab: select · Enter: change · Delete: clear · Esc: cancel	Flechas / Tab: elegir · Enter: cambiar · Delete: borrar · Esc: cancelar	Flèches / Tab : choisir · Entrée : modifier · Suppr : effacer · Échap : annuler	Pfeile / Tab: wählen · Enter: ändern · Entf: löschen · Esc: abbrechen	方向键 / Tab：选择 · Enter：更改 · Delete：清除 · Esc：取消	الأسهم / Tab: اختيار · Enter: تعديل · Delete: مسح · Esc: إلغاء	矢印 / Tab：選択 · Enter：変更 · Delete：消去 · Esc：キャンセル
+action	Ação	Action	Acción	Action	Aktion	操作	الإجراء	操作
+primary	Tecla principal	Primary key	Tecla principal	Touche principale	Haupttaste	主按键	المفتاح الأساسي	主キー
+alternate	Alternativa	Alternative	Alternativa	Autre touche	Alternative	备用按键	البديل	副キー
+gamepad	Gamepad	Gamepad	Mando	Manette	Gamepad	手柄	يد التحكم	コントローラー
+save	Guardar	Save	Guardar	Enregistrer	Speichern	保存	حفظ	保存
+cancel	Cancelar	Cancel	Cancelar	Annuler	Abbrechen	取消	إلغاء	キャンセル
+restore	Repor origem	Restore defaults	Restaurar	Réinitialiser	Zurücksetzen	恢复默认	استعادة الافتراضي	初期設定に戻す
+deadzone	Zona morta: {value}%	Deadzone: {value}%	Zona muerta: {value}%	Zone morte : {value}%	Totzone: {value}%	死区：{value}%	المنطقة الميتة: {value}%	デッドゾーン：{value}%
+movement	Direcional / analógico	D-pad / stick	Cruceta / palanca	Croix / stick	Steuerkreuz / Stick	方向键 / 摇杆	الاتجاهات / العصا	十字キー / スティック
+footer	A/B/X/Y: posições Xbox. Centra o analógico após perder o foco. Ctrl+S: guardar.	A/B/X/Y: Xbox layout. Center the stick after losing focus. Ctrl+S: save.	A/B/X/Y: posiciones Xbox. Centra la palanca al perder el foco. Ctrl+S: guardar.	A/B/X/Y : disposition Xbox. Recentrez le stick après perte du focus. Ctrl+S : enregistrer.	A/B/X/Y: Xbox-Anordnung. Stick nach Fokusverlust zentrieren. Strg+S: speichern.	A/B/X/Y：Xbox 布局。失去焦点后将摇杆归中。Ctrl+S：保存。	A/B/X/Y: ترتيب Xbox. أعد العصا للوسط بعد فقدان التركيز. Ctrl+S: حفظ.	A/B/X/Y：Xbox 配置。フォーカスを失ったらスティックを中央へ。Ctrl+S：保存。
+select_cell	Seleciona uma célula e carrega Enter para alterar.	Select a cell and press Enter to change it.	Selecciona una casilla y pulsa Enter para cambiarla.	Sélectionnez une cellule et appuyez sur Entrée.	Wähle ein Feld und drücke Enter zum Ändern.	选择一个单元格，按 Enter 更改。	اختر خلية واضغط Enter لتعديلها.	セルを選び、Enter で変更します。
+restored	Comandos de origem preparados. Guarda para aplicar.	Defaults prepared. Save to apply.	Valores predeterminados preparados. Guarda para aplicar.	Valeurs par défaut prêtes. Enregistrez pour appliquer.	Standardwerte vorbereitet. Zum Anwenden speichern.	已准备默认设置。保存后生效。	الإعدادات الافتراضية جاهزة. احفظ لتطبيقها.	初期設定を準備しました。保存して適用してください。
+movement_reserved	Direcional e analógico esquerdo mantêm o movimento.	The D-pad and left stick remain assigned to movement.	La cruceta y la palanca izquierda mantienen el movimiento.	La croix et le stick gauche restent affectés au déplacement.	Steuerkreuz und linker Stick bleiben für die Bewegung reserviert.	方向键和左摇杆始终用于移动。	تبقى أزرار الاتجاهات والعصا اليسرى مخصصة للحركة.	十字キーと左スティックは移動用です。
+press_key	Prime uma tecla.	Press a key.	Pulsa una tecla.	Appuyez sur une touche.	Drücke eine Taste.	请按一个键。	اضغط مفتاحا.	キーを押してください。
+press_button	Prime um botão do gamepad ativo.	Press a button on the active gamepad.	Pulsa un botón del mando activo.	Appuyez sur un bouton de la manette active.	Drücke eine Taste am aktiven Gamepad.	请按当前手柄上的一个按钮。	اضغط زرا في يد التحكم النشطة.	使用中のコントローラーのボタンを押してください。
+primary_required	A tecla principal é obrigatória.	A primary key is required.	La tecla principal es obligatoria.	Une touche principale est requise.	Eine Haupttaste ist erforderlich.	必须设置主按键。	المفتاح الأساسي مطلوب.	主キーは必須です。
+changed	Alteração preparada. Guarda para aplicar.	Change prepared. Save to apply.	Cambio preparado. Guarda para aplicar.	Modification prête. Enregistrez pour appliquer.	Änderung vorbereitet. Zum Anwenden speichern.	已准备更改。保存后生效。	التعديل جاهز. احفظ لتطبيقه.	変更を準備しました。保存して適用してください。
+cancelled	Alteração cancelada.	Change cancelled.	Cambio cancelado.	Modification annulée.	Änderung abgebrochen.	已取消更改。	تم إلغاء التعديل.	変更を取り消しました。
+dpad_reserved	O direcional está reservado ao movimento.	The D-pad is reserved for movement.	La cruceta está reservada al movimiento.	La croix est réservée au déplacement.	Das Steuerkreuz ist für Bewegung reserviert.	方向键保留用于移动。	أزرار الاتجاهات مخصصة للحركة.	十字キーは移動用です。
+invalid_preferences	Preferências inválidas: usados os comandos de origem.	Invalid preferences: using default controls.	Preferencias no válidas: se usan los controles predeterminados.	Préférences invalides : commandes par défaut utilisées.	Ungültige Einstellungen: Standardsteuerung wird verwendet.	设置无效：已使用默认操作。	تفضيلات غير صالحة: تستخدم إعدادات التحكم الافتراضية.	設定が無効です。初期設定の操作を使用します。
+io_error	Não foi possível guardar. Verifica o ficheiro e as permissões.	Could not save. Check the file and permissions.	No se pudo guardar. Comprueba el archivo y los permisos.	Enregistrement impossible. Vérifiez le fichier et les droits.	Speichern fehlgeschlagen. Prüfe Datei und Zugriffsrechte.	无法保存。请检查文件和权限。	تعذر الحفظ. تحقق من الملف والصلاحيات.	保存できません。ファイルとアクセス権を確認してください。
+no_gamepad	Sem gamepad — podes ligá-lo durante o jogo	No gamepad — you can connect one during play	Sin mando — puedes conectarlo durante el juego	Aucune manette — connexion possible en cours de jeu	Kein Gamepad — du kannst eines während des Spiels verbinden	未连接手柄，可在游戏中连接	لا توجد يد تحكم — يمكنك توصيلها أثناء اللعب	コントローラーなし — プレイ中に接続できます
+gamepad_error	Gamepad indisponível; usa o teclado.	Gamepad unavailable; use the keyboard.	Mando no disponible; usa el teclado.	Manette indisponible ; utilisez le clavier.	Gamepad nicht verfügbar; verwende die Tastatur.	手柄不可用，请使用键盘。	يد التحكم غير متاحة؛ استخدم لوحة المفاتيح.	コントローラーを利用できません。キーボードを使ってください。
+audio.off	SOM DESLIGADO	SOUND MUTED	SONIDO SILENCIADO	SON COUPÉ	TON STUMM	声音已关闭	الصوت مكتوم	消音中
+audio.unavailable	SOM INDISPONÍVEL	SOUND UNAVAILABLE	SONIDO NO DISPONIBLE	SON INDISPONIBLE	TON NICHT VERFÜGBAR	声音不可用	الصوت غير متاح	音声を利用できません
+audio.volume	SOM {volume}%	SOUND {volume}%	SONIDO {volume}%	SON {volume}%	TON {volume}%	音量 {volume}%	الصوت {volume}%	音量 {volume}%
+audio.keys	F10: silêncio · F11/F12: volume	F10: mute · F11/F12: volume	F10: silenciar · F11/F12: volumen	F10 : couper le son · F11/F12 : volume	F10: stumm · F11/F12: Lautstärke	F10：静音 · F11/F12：音量	F10: كتم · F11/F12: مستوى الصوت	F10：消音 · F11/F12：音量
+error.format	Formato de comandos inválido.	Invalid controls format.	Formato de controles no válido.	Format de commandes invalide.	Ungültiges Steuerungsformat.	操作格式无效。	تنسيق التحكم غير صالح.	操作設定の形式が無効です。
+error.actions	Ações incompatíveis com este jogo.	Actions incompatible with this game.	Acciones incompatibles con este juego.	Actions incompatibles avec ce jeu.	Aktionen sind mit diesem Spiel nicht kompatibel.	操作与本游戏不兼容。	الإجراءات غير متوافقة مع هذه اللعبة.	このゲームと互換性のない操作です。
+error.key_count	Cada ação precisa de uma ou duas teclas.	Each action needs one or two keys.	Cada acción necesita una o dos teclas.	Chaque action nécessite une ou deux touches.	Jede Aktion benötigt eine oder zwei Tasten.	每个操作需要一个或两个按键。	يحتاج كل إجراء إلى مفتاح أو مفتاحين.	各操作には1つか2つのキーが必要です。
+error.unknown_key	Tecla desconhecida.	Unknown key.	Tecla desconocida.	Touche inconnue.	Unbekannte Taste.	未知按键。	مفتاح غير معروف.	不明なキーです。
+error.reserved_key	Tecla reservada pela aplicação.	Key reserved by the application.	Tecla reservada por la aplicación.	Touche réservée par l’application.	Taste ist für die Anwendung reserviert.	该按键已被应用保留。	المفتاح محجوز للتطبيق.	このキーはアプリが使用します。
+error.used_key	Esta tecla já pertence a outra ação.	This key is already assigned to another action.	Esta tecla ya está asignada a otra acción.	Cette touche est déjà affectée à une autre action.	Diese Taste ist bereits einer anderen Aktion zugewiesen.	该按键已分配给其他操作。	هذا المفتاح مخصص بالفعل لإجراء آخر.	このキーは別の操作に割り当てられています。
+error.buttons	Botões incompatíveis com este jogo.	Buttons incompatible with this game.	Botones incompatibles con este juego.	Boutons incompatibles avec ce jeu.	Tasten sind mit diesem Spiel nicht kompatibel.	按钮与本游戏不兼容。	الأزرار غير متوافقة مع هذه اللعبة.	このゲームと互換性のないボタンです。
+error.unknown_button	Botão desconhecido ou reservado ao movimento.	Unknown button or reserved for movement.	Botón desconocido o reservado al movimiento.	Bouton inconnu ou réservé au déplacement.	Unbekannte Taste oder für Bewegung reserviert.	按钮未知或已保留用于移动。	زر غير معروف أو مخصص للحركة.	不明なボタン、または移動用のボタンです。
+error.used_button	Este botão já pertence a outra ação.	This button is already assigned to another action.	Este botón ya está asignado a otra acción.	Ce bouton est déjà affecté à une autre action.	Diese Taste ist bereits einer anderen Aktion zugewiesen.	该按钮已分配给其他操作。	هذا الزر مخصص بالفعل لإجراء آخر.	このボタンは別の操作に割り当てられています。
+error.deadzone	Zona morta deve estar entre 20% e 70%.	Deadzone must be between 20% and 70%.	La zona muerta debe estar entre el 20% y el 70%.	La zone morte doit être comprise entre 20 % et 70 %.	Die Totzone muss zwischen 20% und 70% liegen.	死区必须在 20% 到 70% 之间。	يجب أن تكون المنطقة الميتة بين 20% و70%.	デッドゾーンは20%から70%にしてください。
+error.no_keys	Sem teclas disponíveis para a nova ação.	No keys available for the new action.	No hay teclas disponibles para la nueva acción.	Aucune touche disponible pour la nouvelle action.	Keine Tasten für die neue Aktion verfügbar.	没有可用于新操作的按键。	لا توجد مفاتيح متاحة للإجراء الجديد.	新しい操作に使えるキーがありません。
+error.invalid_file	Ficheiro inválido preservado. Renomeia-o antes de guardar.	Invalid file preserved. Rename it before saving.	Archivo no válido conservado. Renómbralo antes de guardar.	Fichier invalide conservé. Renommez-le avant d’enregistrer.	Ungültige Datei erhalten. Vor dem Speichern umbenennen.	已保留无效文件。保存前请重命名。	تم الاحتفاظ بالملف غير الصالح. أعد تسميته قبل الحفظ.	無効なファイルを保持しました。保存前に名前を変更してください。
+error.other_file	O destino pertence a outro ficheiro ou perfil.	The destination belongs to another file or profile.	El destino pertenece a otro archivo o perfil.	La destination appartient à un autre fichier ou profil.	Das Ziel gehört zu einer anderen Datei oder einem anderen Profil.	目标属于其他文件或配置。	الوجهة تخص ملفا أو إعدادا آخر.	保存先は別のファイルまたは設定で使用されています。

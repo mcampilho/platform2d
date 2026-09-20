@@ -1,0 +1,26 @@
+{
+  "name": "Português",
+  "direction": "ltr",
+  "font": "NotoSans-Regular.ttf",
+  "messages": {
+    "window": "Platform2D — Lição {lesson}",
+    "title": "{lesson} / {title}",
+    "lesson.1": "Janela e desenho",
+    "lesson.2": "Personagem e chão",
+    "lesson.3": "Plataforma e salto",
+    "lesson.4": "Recolha e saída",
+    "lesson.5": "Adversário e vida",
+    "lesson.6": "Pequeno jogo completo",
+    "start": "Enter: começar",
+    "won": "Concluído! R: recomeçar",
+    "paused": "Pausa · P: retomar",
+    "controls": "A/D ou setas: mover · Espaço: saltar · P: pausa · R: recomeçar",
+    "health": "Vida: {current}/{maximum}",
+    "language": "F4: idioma · {name}",
+    "audio.off": "Som desligado",
+    "audio.unavailable": "Som indisponível",
+    "audio.volume": "Som: {volume}%",
+    "audio.keys": "F10: silêncio · F11/F12: volume",
+    "language.unsaved": "Não foi possível guardar o idioma."
+  }
+}

@@ -1,0 +1,26 @@
+{
+  "name": "简体中文",
+  "direction": "ltr",
+  "font": "NotoSansCJKsc-Regular.otf",
+  "messages": {
+    "window": "Platform2D — 第{lesson}课",
+    "title": "{lesson} / {title}",
+    "lesson.1": "窗口与绘图",
+    "lesson.2": "角色与地面",
+    "lesson.3": "平台与跳跃",
+    "lesson.4": "收集物品与出口",
+    "lesson.5": "敌人与生命值",
+    "lesson.6": "完整的小游戏",
+    "start": "Enter：开始",
+    "won": "完成！R：重新开始",
+    "paused": "已暂停 · P：继续",
+    "controls": "A/D 或方向键：移动 · 空格：跳跃 · P：暂停 · R：重新开始",
+    "health": "生命值：{current}/{maximum}",
+    "language": "F4：语言 · {name}",
+    "audio.off": "声音已关闭",
+    "audio.unavailable": "声音不可用",
+    "audio.volume": "音量：{volume}%",
+    "audio.keys": "F10：静音 · F11/F12：音量",
+    "language.unsaved": "无法保存语言设置。"
+  }
+}

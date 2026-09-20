@@ -1,0 +1,26 @@
+{
+  "name": "English",
+  "direction": "ltr",
+  "font": "NotoSans-Regular.ttf",
+  "messages": {
+    "window": "Platform2D — Lesson {lesson}",
+    "title": "{lesson} / {title}",
+    "lesson.1": "Window and drawing",
+    "lesson.2": "Character and ground",
+    "lesson.3": "Platform and jump",
+    "lesson.4": "Collect and exit",
+    "lesson.5": "Enemy and health",
+    "lesson.6": "A complete small game",
+    "start": "Enter: start",
+    "won": "Completed! R: restart",
+    "paused": "Paused · P: resume",
+    "controls": "A/D or arrows: move · Space: jump · P: pause · R: restart",
+    "health": "Health: {current}/{maximum}",
+    "language": "F4: language · {name}",
+    "audio.off": "Sound muted",
+    "audio.unavailable": "Sound unavailable",
+    "audio.volume": "Sound: {volume}%",
+    "audio.keys": "F10: mute · F11/F12: volume",
+    "language.unsaved": "Could not save the language."
+  }
+}

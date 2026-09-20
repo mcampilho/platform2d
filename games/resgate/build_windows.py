@@ -1,5 +1,6 @@
 """Run with a Windows Python where the game, engine and PyInstaller are installed."""
 import argparse,os,subprocess,sys
+import platform2d,resgate
 from pathlib import Path
 
 
@@ -13,8 +14,10 @@ def main():
     env=dict(os.environ); env.pop('PYTHONPATH',None)
     env['PYINSTALLER_CONFIG_DIR']=str(work/'cache')
     subprocess.run([sys.executable,'-m','PyInstaller','--noconfirm','--noupx','--onedir','--windowed',
+                    '--paths',str(Path(platform2d.__file__).resolve().parent.parent),
+                    '--paths',str(Path(resgate.__file__).resolve().parent.parent),
                     '--name','ResgateNaEstacao','--distpath',str(output),'--workpath',str(work/'work'),
-                    '--specpath',str(work),'--collect-data','resgate','--collect-data','platform2d.audio',
+                    '--specpath',str(work),'--collect-data','resgate','--collect-data','platform2d',
                     '--icon',str(icon),str(entry)],cwd=work,env=env,check=True)
 
 

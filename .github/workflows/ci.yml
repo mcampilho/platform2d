@@ -19,7 +19,7 @@ jobs:
         with:
           python-version: '3.12'
       - name: Install the engine and independent game
-        run: python -m pip install -e . -e games/resgate build twine
+        run: python -m pip install -e ".[i18n]" -e games/resgate build twine
       - name: Engine tests
         run: python -m unittest discover -s tests
       - name: Independent game tests
@@ -28,6 +28,10 @@ jobs:
         run: python -m resgate --self-test --data-dir artifacts/ci-resgate
       - name: Verify tutorial
         run: python tutorials/first_game/main.py --verify
+      - name: Verify all tutorial languages and fonts
+        run: python tools/check_tutorial_languages.py
+      - name: Verify Resgate and shared controls in all languages
+        run: python tools/check_resgate_languages.py
       - name: Build and validate distributions
         run: |
           python -m build

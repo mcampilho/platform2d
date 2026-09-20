@@ -5,9 +5,9 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 OUT = ROOT / 'artifacts/releases'
-TREES = ('platform2d', 'examples', 'tests', 'tools', 'docs', 'tutorials', '.github')
+TREES = ('platform2d', 'examples', 'tests', 'tools', 'docs', 'tutorials', 'translations', '.github')
 SKIP = {'__pycache__', 'build', 'dist', '.venv', 'saves', 'preferences'}
-EXTENSIONS = {'.py', '.md', '.json', '.png', '.wav', '.ico', '.toml', '.tmpl', '.yml', '.yaml', '.txt'}
+EXTENSIONS = {'.py', '.md', '.json', '.png', '.wav', '.ico', '.toml', '.tmpl', '.yml', '.yaml', '.txt', '.ttf', '.otf', '.tsv'}
 
 
 def main():
