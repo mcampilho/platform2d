@@ -58,4 +58,4 @@ Uma campanha guardada noutro caminho recebe uma gravação de progresso independ
 Desde a fase 20, podes usar **Editar mapa → F8** para procurar e reproduzir uma solução de Aventura sem combate. A validação da lista de campanha continua estrutural. Consulta [validar percursos](adventure-validation.md).
 
 
-Desde a fase 0.22, o atalho abre uma cópia da campanha de 12 etapas, incluindo [Novos Horizontes](new-horizons.md). O manifesto `odyssey-duel.json` conserva as oito etapas anteriores.
+O atalho abre uma cópia da campanha de 13 etapas, incluindo [Novos Horizontes](new-horizons.md) e a [Mina das Chaves Perdidas](lost-keys-mine.md). O manifesto `odyssey-duel.json` conserva as oito etapas anteriores.

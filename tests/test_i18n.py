@@ -7,7 +7,7 @@ from unittest.mock import patch
 os.environ.setdefault('SDL_VIDEODRIVER','dummy')
 os.environ.setdefault('SDL_AUDIODRIVER','dummy')
 import pygame
-from platform2d.i18n import Translator, visual_text
+from platform2d.i18n import FONT_FOLDER, TextRenderer, Translator, visual_text
 from tutorials.first_game.scene import LessonScene
 
 FOLDER=Path(__file__).resolve().parents[1]/'tutorials/first_game/locales'
@@ -71,6 +71,19 @@ class TranslationTests(unittest.TestCase):
         scene=LessonScene(language='ar')
         rect=scene.text_renderer.draw(pygame.Surface((960,576)),scene.translator.text('start'),10)
         self.assertEqual(rect.right,932)
+
+    def test_repeated_arabic_text_and_language_switch_render_correctly(self):
+        pygame.font.init()
+        translator=Translator(FOLDER,'ar')
+        renderer=TextRenderer(translator,FONT_FOLDER)
+        message='الصحة: 12/30 · F11/F12'
+        arabic=renderer.render(message,(255,255,255),24)
+        self.assertIs(renderer.render(message,(255,255,255),24),arabic)
+        translator.select('en')
+        english=renderer.render(message,(255,255,255),24)
+        self.assertIsNot(english,arabic)
+        translator.select('ar')
+        self.assertIs(renderer.render(message,(255,255,255),24),arabic)
 
 
 if __name__=='__main__': unittest.main()

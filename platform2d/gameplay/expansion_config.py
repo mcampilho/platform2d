@@ -1,10 +1,12 @@
 """Map schema for the four optional exploration modes."""
 from math import isfinite
 
-MODES={'cargo','swim','escape','explore'}
+MODES={'cargo','swim','escape','explore','willy'}
 OBJECT_MODES={'crate':{'cargo'},'plate':{'cargo'},'gate':{'cargo','explore'},
-              'water':{'swim'},'air':{'swim'},'ability':{'explore'}}
-SIZES={'crate':(48,48),'plate':(64,6),'gate':(32,160),'water':(256,192),'air':(80,64),'ability':(32,32)}
+              'water':{'swim'},'air':{'swim'},'ability':{'explore'},
+              'crumble':{'willy'},'conveyor':{'willy'},'patrol':{'willy'}}
+SIZES={'crate':(48,48),'plate':(64,6),'gate':(32,160),'water':(256,192),'air':(80,64),'ability':(32,32),
+       'crumble':(32,32),'conveyor':(32,32),'patrol':(32,64)}
 
 
 def validate_expansion(data):
@@ -27,3 +29,10 @@ def validate_expansion(data):
                 raise ValueError('Água: corrente entre -80 e 80 unidades/s.')
         if kind=='crate' and (o.get('w',48)!=48 or o.get('h',48)!=48):
             raise ValueError('Caixa: tamanho de 48×48 unidades.')
+        if kind in {'crumble','conveyor'} and (o.get('w',32)!=32 or o.get('h',32)!=32):
+            raise ValueError(f'{kind}: tamanho de 32×32 unidades.')
+        if kind=='patrol':
+            left,right,speed=o.get('left'),o.get('right'),o.get('speed',48)
+            if (type(left) not in (int,float) or type(right) not in (int,float) or
+                    not all(isfinite(v) for v in (left,right,speed)) or left>o.get('x',0) or right<o.get('x',0) or left>=right or speed<=0):
+                raise ValueError('Patrulha: limites e velocidade inválidos.')

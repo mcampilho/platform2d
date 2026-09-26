@@ -1,0 +1,24 @@
+{
+  "bindings": {
+    "left": ["left", "a"], "right": ["right", "d"],
+    "up": ["up", "w"], "down": ["down", "s"],
+    "jump": ["space", "z"], "dash": ["left shift", "c"],
+    "interact": ["e"], "effects": ["f6"], "reload_theme": ["f7"], "restart": ["r"], "reset": ["f2"],
+    "debug": ["f1"], "pause": ["p"], "step": ["n"]
+  },
+  "movement": {
+    "speed": 230, "acceleration": 1500, "friction": 1900,
+    "air_control": 0.7, "gravity": 1200, "jump_speed": 440,
+    "jump_cut": 170, "terminal_speed": 800,
+    "coyote_time": 0.10, "jump_buffer": 0.12
+  },
+  "effects": {"enabled": true, "shadows": true, "camera": true},
+  "abilities": {
+    "dash": true, "wall_jump": false, "ladders": false,
+    "double_jump": false, "glide": false,
+    "dash_speed": 650, "dash_duration": 0.18, "dash_cooldown": 0.15,
+    "wall_jump_speed": 280, "wall_jump_height": 430,
+    "wall_lock": 0.12, "wall_slide_speed": 85,
+    "climb_speed": 125, "glide_fall_speed": 110
+  }
+}

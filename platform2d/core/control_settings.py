@@ -14,7 +14,7 @@ BUTTONS = {"A":pygame.CONTROLLER_BUTTON_A,"B":pygame.CONTROLLER_BUTTON_B,
            "L3":pygame.CONTROLLER_BUTTON_LEFTSTICK,"R3":pygame.CONTROLLER_BUTTON_RIGHTSTICK}
 DIRECTIONS = {"left":pygame.CONTROLLER_BUTTON_DPAD_LEFT,"right":pygame.CONTROLLER_BUTTON_DPAD_RIGHT,
               "up":pygame.CONTROLLER_BUTTON_DPAD_UP,"down":pygame.CONTROLLER_BUTTON_DPAD_DOWN}
-DEFAULT_BUTTONS = {"guard":"R3","jump":"A","dash":"B","attack":"X","shoot":"X","interact":"Y","use_item":"Y","continue":"RB","pause":"Start",
+DEFAULT_BUTTONS = {"guard":"R3","jump":"A","dash":"B","glide":"Y","attack":"X","shoot":"X","interact":"Y","use_item":"Y","continue":"RB","pause":"Start",
                    "restart":"Back","save_progress":"LB","load_progress":"RB"}
 RESERVED = {pygame.K_ESCAPE,pygame.K_F3,pygame.K_F5,pygame.K_F10,pygame.K_F11,pygame.K_F12}
 

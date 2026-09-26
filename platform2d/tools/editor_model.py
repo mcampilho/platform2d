@@ -302,7 +302,9 @@ class MapDocument:
         self.commit()
 
     def resize(self,width,height):
-        if self.profile == "adventure" and not (960 <= width*self.tile_size <= 3840 and 576 <= height*self.tile_size <= 2048):
+        mode=self.data.get('properties',{}).get('traversal')
+        willy_size=mode=='willy' and (width*self.tile_size,height*self.tile_size)==(1024,512)
+        if self.profile == "adventure" and not willy_size and not (960 <= width*self.tile_size <= 3840 and 576 <= height*self.tile_size <= 2048):
             raise ValueError("Aventura: dimensões entre 960×576 e 3840×2048.")
         if self.profile in {"rooms","ranged"} and (width*self.tile_size,height*self.tile_size) != (960,576):
             raise ValueError("Os perfis Salas e Combate usam ecrãs fixos de 960×576 unidades.")
@@ -407,7 +409,7 @@ class MapDocument:
                 issues.append(Issue('warning',f"{obj['id']}: coloca a base da placa ao nível do chão.",(r.x,r.y)))
             if obj.get('weight',2)>len(crates)*2+1:
                 issues.append(Issue('error',f"{obj['id']}: não há peso suficiente no mapa.",(r.x,r.y)))
-        if mode in {'cargo','swim','escape','explore'}:
+        if mode in {'cargo','swim','escape','explore','willy'}:
             issues.append(Issue('warning','Este modo tem regras dinâmicas: F8 é inconclusivo; testa o percurso com F5.'))
         goals = [o for o in objects if o["type"] in {"goal","door"}]
         for i,goal in enumerate(goals):

@@ -31,6 +31,8 @@ jobs:
       - run: python tutorials/first_game/main.py --verify
       - run: python tools/check_tutorial_languages.py
       - run: python tools/check_resgate_languages.py
+      - run: python tools/check_campaign_languages.py
+      - run: python tools/check_editor_languages.py
       - run: python -m resgate --self-test --data-dir artifacts/publish-check
   build:
     needs: validate

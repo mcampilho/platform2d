@@ -191,6 +191,7 @@ class WorldTests(unittest.TestCase):
         small = Camera((960,540),(100,100))
         small.follow(Body(100,100),DT,snap=True)
         self.assertEqual((small.x,small.y),(0,0))
+        with self.assertRaises(ValueError): Camera((960,540),(100,100),look_ahead=2)
 
     def test_sheet_animation_does_not_change_body(self):
         frames = slice_sheet(pygame.Surface((64,40)),(32,40))

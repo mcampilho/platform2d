@@ -6,7 +6,7 @@
   "properties": {
     "traversal": "walk",
     "scroll": "horizontal",
-    "theme": "garden",
+    "theme": "observatory",
     "weapon_enabled": false
   },
   "tiles": [

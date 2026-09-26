@@ -1,0 +1,40 @@
+{
+  "format": "platform2d.theme",
+  "version": 1,
+  "id": "lost-keys-mine",
+  "name": "Mina das Chaves Perdidas",
+  "palette": {
+    "ink": [13, 11, 29],
+    "panel": [30, 28, 48],
+    "line": [77, 72, 101],
+    "accent": [145, 113, 68],
+    "highlight": [242, 198, 91],
+    "text": [231, 232, 222],
+    "muted": [132, 157, 159]
+  },
+  "assets": {"background": "willy-mine-background.png"},
+  "parallax": {"background": 0.34},
+  "sprites": {
+    "guardian": {
+      "image": "willy-guardian-atlas.png",
+      "frame_size": [60, 72],
+      "clips": {"walk": {"frames": [0, 1, 2, 3, 4, 5, 6, 7], "fps": 8}},
+      "anchor": [0.5, 1.0],
+      "directional": true
+    },
+    "bush": {
+      "image": "willy-bush-atlas.png",
+      "frame_size": [52, 45],
+      "clips": {"sway": {"frames": [0, 1, 2, 3, 4, 5, 6, 7], "fps": 5}},
+      "anchor": [0.5, 1.0],
+      "directional": false
+    },
+    "key": {
+      "image": "willy-key.png",
+      "frame_size": [40, 36],
+      "clips": {"idle": {"frames": [0], "fps": 1}},
+      "anchor": [0.5, 0.5],
+      "directional": false
+    }
+  }
+}

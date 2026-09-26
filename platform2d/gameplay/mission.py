@@ -4,13 +4,14 @@ THEMES = {
     'garden': ((13,32,29),(24,49,40),(61,92,66),(36,63,47)),
     'ice': ((15,28,46),(28,49,69),(83,120,144),(46,77,104)),
     'reactor': ((32,19,36),(52,30,52),(96,64,88),(62,37,60)),
+    'observatory': ((10,26,34),(20,45,49),(83,116,91),(40,69,62)),
 }
 
 
 def validate_mission(properties,objects):
     theme=properties.get('theme','station')
     if not isinstance(theme,str) or theme not in THEMES:
-        raise ValueError('Tema desconhecido: station, garden, ice ou reactor.')
+        raise ValueError('Tema desconhecido: station, garden, ice, reactor ou observatory.')
     armed=properties.get('weapon_enabled',True)
     if type(armed) is not bool:
         raise ValueError('weapon_enabled deve ser true ou false.')
@@ -28,15 +29,16 @@ def validate_adventure(data):
     validate_expansion(data)
     props=data.get('properties',{})
     mode=props.get('traversal','walk'); scroll=props.get('scroll','both')
-    if mode not in ('walk','jetpack','ledge','duel','cargo','swim','escape','explore') or scroll not in ('none','horizontal','vertical','both'):
+    if mode not in ('walk','jetpack','ledge','duel','cargo','swim','escape','explore','willy') or scroll not in ('none','horizontal','vertical','both'):
         raise ValueError('Aventura: movimento ou scroll desconhecido.')
     size=data.get('tile_size',32)
     width=len(data['tiles'][0])*size; height=len(data['tiles'])*size
-    if not (960<=width<=3840 and 576<=height<=2048):
+    willy_size=mode=='willy' and (width,height)==(1024,512)
+    if not willy_size and not (960<=width<=3840 and 576<=height<=2048):
         raise ValueError('Aventura: dimensões entre 960×576 e 3840×2048.')
     if scroll=='none' and (width,height)!=(960,576):
         raise ValueError('Sem scroll, usa 960×576.')
-    if (scroll=='horizontal' and height!=576) or (scroll=='vertical' and width!=960):
+    if not willy_size and ((scroll=='horizontal' and height!=576) or (scroll=='vertical' and width!=960)):
         raise ValueError('Scroll horizontal: altura 576. Scroll vertical: largura 960. Usa dois eixos para ampliar ambos.')
     objects=data.get('objects',[])
     rocket=[o for o in objects if isinstance(o,dict) and o.get('type')=='rocket']

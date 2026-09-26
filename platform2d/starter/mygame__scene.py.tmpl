@@ -1,17 +1,28 @@
 """A tiny complete game. Extend these rules without editing Platform2D."""
+from pathlib import Path
 import pygame
 from platform2d.actors.character import Character
 from platform2d.physics.body import Body,Box
 from platform2d.physics.collision import Collider
+from platform2d.rendering.theme import ThemeHandle
 
 class MyScene:
     def __init__(self):
+        self.theme_handle=ThemeHandle(Path(__file__).with_name('theme.json'))
+        self.theme=self.theme_handle.current
         self.player=Character(Body(80,482))
         self.floor=[Collider(Box(0,512,960,64)),Collider(Box(300,448,128,16),True)]
         self.font=pygame.font.Font(None,30)
         self.paused=False; self.collected=False; self.won=False
+        self.theme_notice=''; self.theme_notice_time=0
 
     def update(self,dt,actions):
+        self.theme_notice_time=max(0,self.theme_notice_time-dt)
+        if 'reload_theme' in actions.pressed:
+            if self.theme_handle.reload():
+                self.theme=self.theme_handle.current; self.theme_notice='Tema recarregado.'
+            else: self.theme_notice='Tema preservado: '+self.theme_handle.error
+            self.theme_notice_time=5
         if 'pause' in actions.pressed: self.paused=not self.paused
         if 'restart' in actions.pressed: self.__init__()
         if self.paused or self.won:
@@ -23,10 +34,17 @@ class MyScene:
         if self.collected and b.box.overlaps(Box(880,452,40,60)): self.won=True
 
     def draw(self,surface,alpha):
-        surface.fill((12,23,37))
-        for c in self.floor: pygame.draw.rect(surface,(53,103,117),(c.box.x,c.box.y,c.box.w,c.box.h))
-        if not self.collected: pygame.draw.circle(surface,(249,206,116),(356,426),12)
-        pygame.draw.rect(surface,(119,227,190) if self.collected else (110,110,130),(880,452,40,60),3)
-        x,y=self.player.body.interpolated(alpha); pygame.draw.rect(surface,(118,232,213),(x,y,24,30),border_radius=6)
+        surface.fill(self.theme.color('ink'))
+        for index in range(12):
+            x=index*96; height=80+(index*37)%150
+            pygame.draw.polygon(surface,self.theme.color('panel'),
+                                ((x-80,512),(x+35,512-height),(x+120,512)))
+        for c in self.floor: pygame.draw.rect(surface,self.theme.color('line'),(c.box.x,c.box.y,c.box.w,c.box.h))
+        if not self.collected: pygame.draw.circle(surface,self.theme.color('highlight'),(356,426),12)
+        pygame.draw.rect(surface,self.theme.color('accent') if self.collected else self.theme.color('muted'),(880,452,40,60),3)
+        x,y=self.player.body.interpolated(alpha); pygame.draw.rect(surface,self.theme.color('accent'),(x,y,24,30),border_radius=6)
         text='Concluído! R: jogar novamente' if self.won else 'Pausa' if self.paused else 'Setas: mover · Espaço: saltar · recolhe a esfera e chega à porta'
-        surface.blit(self.font.render(text,True,(226,238,244)),(30,35))
+        surface.blit(self.font.render(text,True,self.theme.color('text')),(30,35))
+        if self.theme_notice_time:
+            pygame.draw.rect(surface,self.theme.color('panel'),(24,72,912,42),border_radius=6)
+            surface.blit(self.font.render(self.theme_notice[:90],True,self.theme.color('highlight')),(36,80))

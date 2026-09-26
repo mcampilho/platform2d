@@ -20,6 +20,10 @@ from platform2d.tools.debug_overlay import draw_debug
 class RangedScene:
     FIXED_SIZE = True
     REQUIRES_GOAL = True
+
+    def set_language(self,language):
+        from examples.campaign.locale import CampaignLocale
+        self.locale=CampaignLocale(language)
     def __init__(self,level,settings):
         self.level = level
         if self.FIXED_SIZE and (level.width,level.height) != (960,576):
@@ -122,11 +126,11 @@ class RangedScene:
             if self.inventory.add(item,quantity):
                 self.collected_items.add(obj["id"])
                 self.weapon.spec = upgraded_weapon(self.spec,self.inventory)
-                self.inventory_notice = f"Recolhido: {CATALOG[item].label} ×{quantity}"
+                self.inventory_notice = self.tr('notice.picked','Recolhido: {item} ×{quantity}',item=self.tr('item.'+item,CATALOG[item].label),quantity=quantity)
                 self.inventory_notice_time = 2.5
                 self.audio.play("pickup")
             elif obj["id"] not in self.pickup_contacts:
-                self.inventory_notice = "Sem espaço para esta quantidade de "+CATALOG[item].label+"."
+                self.inventory_notice = self.tr('notice.full','Sem espaço para esta quantidade de {item}.',item=self.tr('item.'+item,CATALOG[item].label))
                 self.inventory_notice_time = 2.5
                 self.audio.play("blocked")
         self.pickup_contacts = contacts
@@ -225,8 +229,22 @@ class RangedScene:
         self.view.update(self.player.state,dt)
 
     def text(self,surface,text,x,y,color=(179,203,217),font=None):
+        locale=getattr(self,'locale',None)
+        if locale is not None:
+            text=locale.literal(text)
         text = getattr(self,"format_controls",str)(text)
-        surface.blit((font or self.small).render(text,True,color),(round(x),round(y)))
+        if locale is not None:
+            size=40 if font is self.large else 27 if font is self.title else 13
+            image=locale.renderer.render(text,color,size,max(12,surface.get_width()-16))
+        else:
+            image=(font or self.small).render(text,True,color)
+        x=round(x)
+        if locale is not None: x=max(0,min(x,surface.get_width()-image.get_width()-4))
+        surface.blit(image,(x,round(y)))
+
+    def tr(self,key,default,**values):
+        locale=getattr(self,'locale',None)
+        return locale.t(key,**values) if locale is not None else default.format_map(values)
 
     def draw_world(self,surface,alpha,background=True):
         if background:
@@ -247,7 +265,7 @@ class RangedScene:
         for obj in self.level.objects:
             r = self.box(obj)
             if obj["type"] == "coin":
-                if obj["id"] not in self.collected_items:
+                if obj["id"] not in self.collected_items and obj.get("style") != "key":
                     pygame.draw.polygon(surface,(255,218,116),[(r.x+r.w/2,r.y),(r.right,r.y+r.h/2),(r.x+r.w/2,r.bottom),(r.x,r.y+r.h/2)])
                     pygame.draw.circle(surface,(255,249,212),(round(r.x+r.w/2),round(r.y+r.h/2)),3)
             elif obj["type"] == "pickup":
@@ -287,7 +305,8 @@ class RangedScene:
                 pygame.draw.rect(surface,color,(r.x,r.y,r.w,r.h),3,border_radius=12)
                 self.text(surface,"SAÍDA" if self.objectives_ready else "BLOQUEADA",r.x-25,r.y-23,color)
             elif obj["type"] == "hazard":
-                pygame.draw.rect(surface,(236,110,137),(r.x,r.y,r.w,r.h))
+                if obj.get("style") not in {"bush","stalactite"}:
+                    pygame.draw.rect(surface,(236,110,137),(r.x,r.y,r.w,r.h))
         self.draw_player(surface,alpha)
         for p in self.projectiles.items:
             x,y = p.interpolated(alpha)
@@ -309,10 +328,10 @@ class RangedScene:
 
     def draw_hud(self,surface):
         pygame.draw.rect(surface,(9,17,29),(0,0,960,94))
-        self.text(surface,"PLATFORM2D  /  LABORATÓRIO "+("13" if self.pickups else "12"),24,15,(118,220,205))
+        self.text(surface,self.tr('hud.lab','PLATFORM2D  /  LABORATÓRIO {number}',number='13' if self.pickups else '12'),24,15,(118,220,205))
         self.text(surface,self.level.name,24,36,(232,241,247),self.title)
         crystals = sum(o["id"] in self.collected_items for o in self.coins)
-        status = f"ALVOS {len(self.destroyed)}/{len(self.objects)}  CRISTAIS {crystals}/{len(self.coins)}" if self.coins else f"ALVOS {len(self.destroyed):02}/{len(self.objects):02}   TIROS {self.shots:03}"
+        status = self.tr('hud.targets_crystals','ALVOS {targets}/{target_total}  CRISTAIS {crystals}/{crystal_total}',targets=len(self.destroyed),target_total=len(self.objects),crystals=crystals,crystal_total=len(self.coins)) if self.coins else self.tr('hud.targets_shots','ALVOS {targets}/{target_total}   TIROS {shots}',targets=f'{len(self.destroyed):02}',target_total=f'{len(self.objects):02}',shots=f'{self.shots:03}')
         self.text(surface,status,637,23,(241,199,130))
         for i in range(self.health.maximum):
             pygame.draw.circle(surface,(115,229,197) if i < self.health.remaining else (44,62,75),(652+i*24,58),7)
@@ -320,10 +339,10 @@ class RangedScene:
         self.text(surface,mission,26,111)
         self.text(surface,"Explora as plataformas. Os cristais não ocupam espaço no inventário." if self.coins else "Usa as coberturas, controla os disparos e procura a saída.",26,132,(115,151,174))
         if self.pickups or self.inventory.snapshot():
-            stats = f"INVENTÁRIO  Dano +{self.inventory.count('power')}/3   Cadência {self.inventory.count('rapid')}/2   Kits {self.inventory.count('medkit')}/3"
+            stats = self.tr('hud.inventory','INVENTÁRIO  Dano +{power}/3   Cadência {rapid}/2   Kits {kits}/3',power=self.inventory.count('power'),rapid=self.inventory.count('rapid'),kits=self.inventory.count('medkit'))
             self.text(surface,stats,26,166,(146,225,205))
-            info = f"Arma: dano {self.weapon.spec.damage} · intervalo {self.weapon.spec.cooldown:.2f}s" if self.armed else "Disparos desativados nesta sala"
-            self.text(surface,info+"   [H] usar kit (+2 vida)",26,188)
+            info = self.tr('hud.weapon','Arma: dano {damage} · intervalo {interval}s   [H] usar kit (+2 vida)',damage=self.weapon.spec.damage,interval=f'{self.weapon.spec.cooldown:.2f}') if self.armed else self.tr('hud.unarmed','Disparos desativados nesta sala   [H] usar kit (+2 vida)')
+            self.text(surface,info,26,188)
         if self.inventory_notice_time:
             self.text(surface,self.inventory_notice,26,217,(248,209,132))
         self.text(surface,"F3: comandos  |  R: checkpoint  |  F2: recomeçar",25,555)
@@ -336,7 +355,7 @@ class RangedScene:
             shade.fill((3,10,21,215))
             surface.blit(shade,(0,0))
             self.text(surface,"Setor seguro" if self.won else "Em pausa",320,222,(220,245,237),self.large)
-            self.text(surface,f"{self.shots} disparos · {self.deaths} mortes · F2 para recomeçar" if self.won else "P para continuar · N para avançar",300,284)
+            self.text(surface,self.tr('hud.win_stats','{shots} disparos · {deaths} mortes · F2 para recomeçar',shots=self.shots,deaths=self.deaths) if self.won else "P para continuar · N para avançar",300,284)
 
     def draw(self,surface,alpha):
         self.draw_world(surface,alpha)

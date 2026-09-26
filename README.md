@@ -1,13 +1,13 @@
 # Platform2D
 
 Motor modular para jogos de plataformas em **Python + Pygame**, desenvolvido
-por etapas para aprender a construir jogos. Versão preparada: **0.23.0**.
+por etapas para aprender a construir jogos. Versão preparada: **0.24.0**.
 Licença **MIT**, permitindo utilização, modificação e distribuição, incluindo
 jogos comerciais, nos termos da licença.
 
 Inclui física e colisões, vários controladores, animação, câmaras e parallax,
 combate, áudio, inventário, mecanismos, progresso e ferramentas de edição.
-A campanha de demonstração reúne 12 níveis com diferentes estilos. O jogo
+A campanha de demonstração reúne 13 níveis com diferentes estilos. O jogo
 **Resgate na Estação** demonstra um projeto independente com três níveis.
 
 ## Começar
@@ -35,6 +35,15 @@ que já esteja disponível no PyPI.
 ## Aprender e experimentar
 
 - [Primeiro jogo: seis lições executáveis](docs/first-game-tutorial.md).
+- [Laboratório de mobilidade: dash, parede, salto duplo e glide](docs/mobility-laboratory.md).
+- [Laboratório ambiental: plataformas, interruptores, água e gravidade](docs/environment-laboratory.md).
+- [Direção visual e camadas do Mundo Vivo](docs/visual-art-direction.md).
+- [Temas visuais reutilizáveis](docs/visual-themes.md).
+- [Câmara e apresentação do movimento](docs/camera-presentation.md).
+- [Transições entre momentos](docs/scene-transitions.md).
+- [Orientação para objetivos fora do ecrã](docs/objective-guidance.md).
+- [Mina das Chaves Perdidas — grelha clássica 32×16](docs/lost-keys-mine.md).
+- [Personagem ilustrada e animação do Mundo Vivo](docs/character-animation.md).
 - [Tutorial em oito idiomas e internacionalização](docs/internationalization.md).
 - [Internacionalizar um jogo criado com a framework](docs/localizing-your-game.md).
 - [Como funciona o jogo independente](docs/learning-independent-game.md).

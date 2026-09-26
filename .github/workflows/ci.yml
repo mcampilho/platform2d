@@ -32,6 +32,10 @@ jobs:
         run: python tools/check_tutorial_languages.py
       - name: Verify Resgate and shared controls in all languages
         run: python tools/check_resgate_languages.py
+      - name: Verify campaign and editors in all languages
+        run: |
+          python tools/check_campaign_languages.py
+          python tools/check_editor_languages.py
       - name: Build and validate distributions
         run: |
           python -m build

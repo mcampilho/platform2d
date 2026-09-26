@@ -141,6 +141,16 @@ class OdysseyTests(unittest.TestCase):
         self.assertGreaterEqual(point[1],96); self.assertLess(point[1],576)
         self.assertGreater(s.camera.y,0)
 
+    def test_scrolling_guidance_tracks_required_items_then_exit(self):
+        self.campaign.progress.index=5
+        self.campaign.active=create_scene(self.docs[5],self.settings)
+        s=self.campaign.active
+        first=s.guidance_target(); self.assertIsNotNone(first)
+        self.assertFalse(s.objectives_ready)
+        s.collected_items.update(o['id'] for o in s.coins)
+        goal=next(o for o in s.level.objects if o['type']=='goal')
+        self.assertEqual(s.guidance_target(),(goal['x']+goal.get('w',24)/2,goal['y']+goal.get('h',30)/2))
+
     def test_editor_extended_map_roundtrip_and_limits(self):
         doc=MapDocument(deepcopy(self.docs[5].data))
         doc.update_mission(scroll='both',traversal='ledge')

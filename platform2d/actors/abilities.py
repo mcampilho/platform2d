@@ -10,6 +10,8 @@ class Abilities:
     dash: bool = True
     wall_jump: bool = True
     ladders: bool = True
+    double_jump: bool = False
+    glide: bool = False
     dash_speed: float = 650
     dash_duration: float = .18
     dash_cooldown: float = .15
@@ -18,13 +20,14 @@ class Abilities:
     wall_lock: float = .12
     wall_slide_speed: float = 85
     climb_speed: float = 125
+    glide_fall_speed: float = 110
 
     def __post_init__(self):
-        for name in ("dash","wall_jump","ladders"):
+        for name in ("dash","wall_jump","ladders","double_jump","glide"):
             if type(getattr(self,name)) is not bool:
                 raise ValueError(f"Capacidade {name}: usa true ou false.")
         for name,value in vars(self).items():
-            if name in {"dash","wall_jump","ladders"}:
+            if name in {"dash","wall_jump","ladders","double_jump","glide"}:
                 continue
             if type(value) not in (int,float) or not isfinite(value) or value <= 0:
                 raise ValueError(f"Capacidade {name}: valor finito positivo obrigatório.")
@@ -44,6 +47,7 @@ class PrecisionController(ArcadeController):
         self.dash_direction = (1,0)
         self.wall_velocity = 0
         self.ladder = None
+        self.extra_jump_used = False
 
     def interrupt(self):
         ready,cooldown = self.dash_ready,self.cooldown_left
@@ -81,6 +85,8 @@ class PrecisionController(ArcadeController):
         self.wall_lock_left = max(0,self.wall_lock_left-dt)
         vertical = actions.axis("up","down")
         direction = actions.axis()
+        if body.on_ground:
+            self.extra_jump_used = False
         # One charge, restored by actual ground contact; ladders and walls don't refill.
         if body.on_ground and self.dash_left <= 0:
             self.dash_ready = True
@@ -141,6 +147,8 @@ class PrecisionController(ArcadeController):
                     return
         side = self.wall_side(body) if a.wall_jump else 0
         wall_jump = bool(side and not body.on_ground and "jump" in actions.pressed)
+        double_jump = bool(a.double_jump and not body.on_ground and self.coyote <= 0
+                           and not side and not self.extra_jump_used and "jump" in actions.pressed)
         super().before_physics(body,actions,dt)
         if wall_jump:
             self.motion_events += ("jump",)
@@ -151,12 +159,18 @@ class PrecisionController(ArcadeController):
             self.wall_lock_left = a.wall_lock
             self.facing = -side
             self.coyote = self.buffer = 0
+        elif double_jump:
+            self.jump(body)
+            self.extra_jump_used = True
         elif self.wall_lock_left > 0:
             body.vx = self.wall_velocity
             self.facing = 1 if self.wall_velocity > 0 else -1
         elif side and direction == side and not body.on_ground and body.vy > 0:
             body.vy = min(body.vy,a.wall_slide_speed)
             self.motion_state = "wall_slide"
+        if a.glide and "glide" in actions.held and not body.on_ground and body.vy > 0:
+            body.vy = min(body.vy,a.glide_fall_speed)
+            self.motion_state = "glide"
 
     def after_physics(self, body):
         landed = body.on_ground

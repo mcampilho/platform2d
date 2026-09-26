@@ -3,6 +3,7 @@ import hashlib,json,shutil,sys,zipfile
 from pathlib import Path
 ROOT=Path(__file__).resolve().parents[1]
 OUT=ROOT/'artifacts/releases'
+ENGINE_VERSION='0.24.0'
 
 
 def add_tree(zipfile_,source,prefix,extensions=None):
@@ -26,11 +27,11 @@ def main():
     shutil.copytree(third/'pygame',licences/'pygame',dirs_exist_ok=True)
     shutil.copy2(third/'pygame-2.6.1.tar.gz',licences/'pygame-2.6.1-source.tar.gz')
     shutil.copy2(ROOT/'games/resgate/README.md',game/'LEIA-ME.md')
-    (game/'CREDITOS.txt').write_text('Resgate na Estação 1.0.0 / Platform2D 0.23.0\nCódigo, mapas e arte procedural: Miguel e colaboradores Platform2D (MIT).\nPython, Pygame, SDL e bibliotecas: respetivos autores. Ver licenses.\nPygame 2.6.1 sem modificações; código-fonte incluído.\nO SDK e o código do jogo permitem reconstruir a aplicação com bibliotecas modificadas compatíveis.\nEmpacotamento: PyInstaller 6.22.0, sem UPX. Windows x64; sem assinatura digital.\n',encoding='utf-8')
-    sdk=OUT/'Platform2D-SDK-0.23.0.zip'
+    (game/'CREDITOS.txt').write_text(f'Resgate na Estação 1.0.0 / Platform2D {ENGINE_VERSION}\nCódigo, mapas e arte procedural: Miguel e colaboradores Platform2D (MIT).\nPython, Pygame, SDL e bibliotecas: respetivos autores. Ver licenses.\nPygame 2.6.1 sem modificações; código-fonte incluído.\nO SDK e o código do jogo permitem reconstruir a aplicação com bibliotecas modificadas compatíveis.\nEmpacotamento: PyInstaller 6.22.0, sem UPX. Windows x64; sem assinatura digital.\n',encoding='utf-8')
+    sdk=OUT/f'Platform2D-SDK-{ENGINE_VERSION}.zip'
     with zipfile.ZipFile(sdk,'w',zipfile.ZIP_DEFLATED) as z:
-        prefix='Platform2D-SDK-0.23.0'
-        for name in ('platform2d-0.23.0-py3-none-any.whl','resgate_na_estacao-1.0.0-py3-none-any.whl'):
+        prefix=f'Platform2D-SDK-{ENGINE_VERSION}'
+        for name in (f'platform2d-{ENGINE_VERSION}-py3-none-any.whl','resgate_na_estacao-1.0.0-py3-none-any.whl'):
             z.write(ROOT/'artifacts/dist'/name,f'{prefix}/wheels/{name}')
         for name in ('using-platform2d.md','distributing-platform2d.md','learning-independent-game.md', 'first-game-tutorial.md', 'internationalization.md', 'localizing-your-game.md', 'second-computer-test.md', 'publishing-github-pypi.md'):
             z.write(ROOT/'docs'/name,f'{prefix}/docs/{name}')

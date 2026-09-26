@@ -15,7 +15,7 @@ py -3.12 -m venv .venv
 .venv\Scripts\python.exe tutorials/first_game/main.py --lesson 1
 ```
 
-Para esta fase multilingue, usa o código atual do repositório: o SDK 0.23.0
+Para esta fase multilingue, usa o código atual do repositório: o SDK 0.24.0
 anterior ainda não a inclui. O tutorial não precisa dos exemplos da Aurora.
 
 ## Lição 1 — abrir uma janela

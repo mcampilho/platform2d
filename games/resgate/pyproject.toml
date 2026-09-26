@@ -10,7 +10,7 @@ readme = "README.md"
 requires-python = ">=3.10"
 license = "MIT"
 license-files = ["LICENSE"]
-dependencies = ["platform2d[i18n]==0.23.0"]
+dependencies = ["platform2d[i18n]==0.24.0"]
 
 [project.scripts]
 resgate = "resgate.__main__:main"

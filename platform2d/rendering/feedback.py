@@ -31,10 +31,10 @@ class Feedback:
             p[0]+=p[2]*dt; p[1]+=p[3]*dt; p[3]+=90*dt; p[4]-=dt
         self.particles=[p for p in self.particles if p[4]>0]
 
-    def draw(self,surface):
+    def draw(self,surface,offset=(0,0)):
         if not self.enabled: return
         for x,y,vx,vy,life,color in self.particles:
-            pygame.draw.circle(surface,color,(round(x),round(y)),max(1,round(4*life/.45)))
+            pygame.draw.circle(surface,color,(round(x-offset[0]),round(y-offset[1])),max(1,round(4*life/.45)))
         if self.flash:
             layer=pygame.Surface(surface.get_size(),pygame.SRCALPHA)
             layer.fill((240,90,100,round(65*self.flash/.2)))

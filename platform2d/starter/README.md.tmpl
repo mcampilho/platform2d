@@ -4,8 +4,27 @@ Com o motor instalado no ambiente virtual, executa `python -m mygame` nesta past
 Setas/A/D movem; Espaço/Z salta; P pausa; R recomeça. Recolhe a esfera e chega à porta.
 
 `mygame/scene.py` contém as regras. `mygame/__main__.py` configura a janela e os comandos.
+`mygame/theme.json` define a paleta sem alterar movimento, colisões ou objetivos.
+Enquanto o jogo está aberto, guarda o manifesto e prime F7 para recarregar o tema.
+Se houver um erro, o jogo conserva o último tema válido e mostra a causa.
 Adiciona os teus recursos ao pacote `mygame` e declara-os em `tool.setuptools.package-data`.
 Usa caminhos relativos a `__file__` ou `importlib.resources`, nunca à pasta atual do terminal.
+
+Valida o tema e gera uma imagem de apresentação:
+
+```powershell
+python -m platform2d theme check mygame\theme.json --preview theme-preview.png
+```
+
+Também podes capturar o jogo real sem abrir uma janela:
+
+```powershell
+python -m mygame --headless --frames 30 --screenshot game-preview.png
+```
+
+Para acrescentar arte, cria `mygame/assets`, copia as imagens e indica os nomes em
+`assets` no manifesto. Usa `--assets mygame\assets` ao validar se as imagens não
+estiverem na mesma pasta do manifesto.
 
 Para instalar este jogo noutro ambiente, instala primeiro a wheel oficial do motor e depois
 executa `python -m pip install .`. O nome `my-platform2d-game` é um exemplo: muda-o antes de publicar.

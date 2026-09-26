@@ -1,0 +1,21 @@
+{
+  "format": "platform2d.theme",
+  "version": 1,
+  "id": "observatory",
+  "name": "Observatório Astral",
+  "palette": {
+    "ink": [13, 26, 36],
+    "panel": [21, 39, 47],
+    "line": [83, 97, 81],
+    "accent": [153, 120, 78],
+    "highlight": [215, 178, 106],
+    "text": [229, 226, 204],
+    "muted": [164, 188, 185]
+  },
+  "assets": {
+    "background": "astral-greenhouse-bg.png",
+    "foreground": "observatory-foreground.png",
+    "character": "astronomer-atlas.png"
+  },
+  "parallax": {"background": 0.27, "foreground": 0.55}
+}

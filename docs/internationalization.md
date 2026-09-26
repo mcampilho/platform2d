@@ -1,10 +1,12 @@
 # Internacionalizar Platform2D e os teus jogos
 
-O tutorial, o Resgate na Estação, o painel comum de comandos e os avisos de áudio
+O tutorial, o Resgate na Estação, a campanha Aurora, os editores, os comandos e o áudio
 têm português de Portugal, inglês, espanhol, francês, alemão, chinês simplificado,
 árabe e japonês. O Resgate inclui menus, HUD, nomes de níveis, portas, ar, oxigénio,
-ameaça, briefings, confirmações e mensagens de erro. Os textos próprios dos
-editores, campanhas anteriores e documentação técnica ainda não foram traduzidos.
+ameaça, briefings, confirmações e mensagens de erro. A campanha inclui menus,
+nomes dos mapas e textos dos treze níveis. Os editores incluem ferramentas, menus,
+perfis e diagnósticos frequentes. Outros exemplos independentes e a documentação
+técnica ainda não foram inteiramente traduzidos.
 Estas traduções iniciais devem ser revistas por falantes de cada idioma.
 
 ## Experimentar
@@ -31,6 +33,14 @@ uv pip install --python .venv-resgate313\Scripts\python.exe -e ".[i18n]" -e game
 .venv-resgate313\Scripts\python.exe -m resgate --language ar
 ```
 
+Para jogar a campanha ou abrir os editores no idioma escolhido:
+
+```powershell
+.venv\Scripts\python.exe -m examples.campaign --language ja
+.venv\Scripts\python.exe -m examples.editor --profile campaign --language ar
+.venv\Scripts\python.exe -m examples.editor --language en
+```
+
 Usa o caminho do teu ambiente se tiver outro nome. Para criar um novo ambiente,
 especifica a versão: `uv venv .venv-resgate313 --python 3.13`. O ambiente de CI
 continua em Python 3.12. A escolha do Resgate é feita ao iniciar; não altera a
@@ -48,9 +58,9 @@ gravação. F3 abre o painel traduzido, incluindo conflitos de teclas e botões.
 | Japonês | `ja` |
 
 O tutorial usa teclas fixas e instruções traduzidas. O painel comum F3 fica
-desativado neste exemplo. O `Game` e `ControlsPanel` já aceitam `language="en"`
-ou qualquer um dos oito códigos; os jogos existentes continuam em português
-até os seus pontos de entrada receberem essa opção.
+desativado neste exemplo. O `Game` e `ControlsPanel` aceitam `language="en"`
+ou qualquer um dos oito códigos. Outros jogos precisam de catálogo próprio e de
+passar o idioma ao ponto de entrada.
 
 ## Separar código e tradução
 
@@ -110,6 +120,8 @@ nem comprime horizontalmente os caracteres.
 ```powershell
 .venv\Scripts\python.exe tools/check_tutorial_languages.py
 .venv\Scripts\python.exe tools/check_resgate_languages.py
+.venv\Scripts\python.exe tools/check_campaign_languages.py
+.venv\Scripts\python.exe tools/check_editor_languages.py
 .venv\Scripts\python.exe -m unittest discover -s tests
 .venv\Scripts\python.exe tutorials/first_game/main.py --language ar --verify
 ```
@@ -119,17 +131,18 @@ combinações de lição/estado por idioma. As imagens ficam em `artifacts/i18n`
 O GitHub executa também esta verificação. Confirma manualmente legibilidade,
 sentido das traduções e mudança de idioma; testes não fazem revisão linguística.
 
-Para manter as traduções comuns e do Resgate, edita `translations/common.tsv`
-e `translations/resgate.tsv`: cada linha tem uma chave e oito colunas separadas
+Para manter as traduções, edita `translations/common.tsv`, `resgate.tsv`,
+`campaign.tsv` e `editor.tsv`: cada linha tem uma chave e oito colunas separadas
 por tabulações, na ordem do cabeçalho. Executa `python tools/build_ui_catalogs.py`
-para gerar os JSON em `platform2d/locales` e `games/resgate/resgate/locales`.
-Inclui no commit a tabela e os JSON gerados. Estes jogos carregam apenas os JSON;
+para gerar os JSON nas pastas `locales` dos componentes.
+Inclui no commit as tabelas e os JSON gerados. Os programas carregam apenas os JSON;
 a ferramenta de geração não é necessária no computador do jogador.
 
 ## Migrar o resto do projeto
 
-Falta migrar os textos específicos da campanha principal, restantes exemplos,
-editores e validações, documentação e página pública. Usa catálogos separados
+Falta migrar os textos dos outros exemplos independentes, alguns erros de
+ficheiros personalizados que surgem no editor, documentação e página pública.
+Usa catálogos separados
 por componente e IDs estáveis. Começa a documentação internacional com um
 README inglês, depois guias por idioma identificando a versão traduzida.
 
@@ -137,10 +150,10 @@ O tutorial evita plurais e datas. Quando necessários, usa regras de cada língu
 (por exemplo, CLDR através de Babel), sem pressupor apenas singular/plural.
 Planeia formatos de números, quebra de linhas CJK e fontes de reserva.
 
-Esta fase está em desenvolvimento após a preparação da versão 0.23.0. Antes
-de publicar, escolhe uma nova versão, atualiza referências, gera novos pacotes
-e cria nova tag. Não substituas uma versão publicada nem uses os ZIPs anteriores
-como se incluíssem esta fase.
+Esta internacionalização faz parte da versão 0.24.0. Os catálogos do tutorial,
+Resgate, campanha e editores são verificados no CI nos oito idiomas. Exemplos
+independentes que não usam estes catálogos podem ser migrados gradualmente com
+o mesmo modelo, sem alterar as chaves já publicadas.
 
 ## Referências
 

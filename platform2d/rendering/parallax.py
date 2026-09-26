@@ -5,12 +5,14 @@ from math import floor
 
 def draw_parallax(surface,camera,theme='station'):
     x,y=camera
-    surface.fill((12,20,37) if theme!='reactor' else (29,18,33))
+    base = {'reactor': (29,18,33), 'observatory': (11,29,35)}.get(theme, (12,20,37))
+    surface.fill(base)
     width,height=surface.get_size()
     for i in range(65):
         px=(i*173-x*.12)%(width+40)-20
         py=(i*97-y*.12)%(height+40)-20
-        pygame.draw.circle(surface,(74,102,135),(round(px),round(py)),1)
+        star = (119,139,103) if theme == 'observatory' else (74,102,135)
+        pygame.draw.circle(surface,star,(round(px),round(py)),1)
     for i,(mx,my,radius) in enumerate([(175,75,24),(680,150,38),(450,255,15)]):
         px=(mx-x*.12+100)%(width+200)-100
         py=my-y*.12
@@ -26,6 +28,13 @@ def draw_parallax(surface,camera,theme='station'):
                 pygame.draw.rect(surface,color,(px+spacing*.2,top,spacing*.6,height-top))
                 pygame.draw.rect(surface,tuple(c+12 for c in color),(px+spacing*.15,top,spacing*.7,12))
                 pygame.draw.rect(surface,(18,25,41),(px+spacing*.35,top+35,spacing*.3,100),border_radius=24)
+            elif theme == 'observatory':
+                pygame.draw.polygon(surface, (29, 56, 57),
+                                    [(px-100,height),(px+spacing/2,top),(px+spacing+100,height)])
+                pygame.draw.arc(surface, (111, 91, 61),
+                                (px + spacing * .2, top - 35, spacing * .6, 85), 3.15, 6.25, 2)
+                pygame.draw.line(surface, (66, 100, 79),
+                                 (px + spacing/2, top), (px + spacing/2 + 24, top + 70), 2)
             else:
                 pygame.draw.polygon(surface,color,[(px-100,height),(px+spacing/2,top),(px+spacing+100,height)])
                 pygame.draw.line(surface,tuple(min(255,c+12) for c in color),(px+spacing/2,top),(px+spacing/2+35,top+75),2)

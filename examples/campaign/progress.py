@@ -5,14 +5,52 @@ from platform2d.gameplay.inventory import CATALOG,Inventory,upgraded_weapon
 from .factory import create_scene
 from platform2d.gameplay.rocket import RocketMission
 from platform2d.gameplay.mission import objectives_complete
+from platform2d.gameplay.mission import THEMES
 
 FORMAT = 'platform2d.campaign.progress'
 
 
-def identity(campaign):
-    return fingerprint(dict(ids=campaign.progress.stages,maps=[d.data for d in campaign.documents],
+VISUAL_PROPERTIES = {'theme', 'visual_theme', 'background_image', 'foreground_image',
+                     'character_atlas'}
+
+
+def _identity(campaign, maps, ids=None):
+    return fingerprint(dict(ids=campaign.progress.stages if ids is None else ids,maps=maps,
                             movement=campaign.settings['movement'],rules='combat-checkpoint-v1',
                             catalog=[(i.id,i.limit) for i in CATALOG.values()]))
+
+
+def identity(campaign):
+    """Gameplay identity: changing presentation must not invalidate progress."""
+    maps = deepcopy([document.data for document in campaign.documents])
+    for data in maps:
+        properties = data.get('properties', {})
+        for key in VISUAL_PROPERTIES:
+            properties.pop(key, None)
+    return _identity(campaign, maps)
+
+
+def accepted_identities(campaign,current=None):
+    """Accept and upgrade saves made before visual properties were excluded."""
+    maps = deepcopy([document.data for document in campaign.documents])
+    accepted = {current if current is not None else identity(campaign), _identity(campaign, maps)}
+    if campaign.progress.stages[-1:] == ('lost-keys',):
+        legacy_maps=deepcopy(maps[:-1]); legacy_ids=campaign.progress.stages[:-1]
+        accepted.add(_identity(campaign,legacy_maps,legacy_ids))
+        for data in legacy_maps:
+            for key in VISUAL_PROPERTIES: data.get('properties',{}).pop(key,None)
+        accepted.add(_identity(campaign,legacy_maps,legacy_ids))
+    # A previous release changed one campaign room from garden to observatory.
+    # Generate the former full-map signature without weakening gameplay checks.
+    for index, data in enumerate(maps):
+        properties = data.get('properties', {})
+        if 'theme' not in properties:
+            continue
+        for theme in THEMES:
+            variant = deepcopy(maps)
+            variant[index]['properties']['theme'] = theme
+            accepted.add(_identity(campaign, variant))
+    return accepted
 
 
 def stats(data):
@@ -21,9 +59,9 @@ def stats(data):
         raise ValueError('Estatísticas inválidas.')
 
 
-def capture(campaign):
+def capture(campaign,identity_value=None):
     s=campaign.active
-    payload = dict(format=FORMAT,version=1,identity=identity(campaign),index=campaign.progress.index,
+    payload = dict(format=FORMAT,version=1,identity=identity_value or identity(campaign),index=campaign.progress.index,
                 totals=deepcopy(campaign.totals),inventory=s.inventory.snapshot(),
                 stage=dict(checkpoint=s.active_checkpoint,destroyed=sorted(s.destroyed),
                            collected=sorted(s.collected_items),won=s.won,
@@ -34,11 +72,11 @@ def capture(campaign):
     return payload
 
 
-def validate(data,campaign):
+def validate(data,campaign,identities=None):
     fields(data,{'format','version','identity','index','totals','inventory','stage'},'campanha')
     if data['format']!=FORMAT or type(data['version']) is not int or data['version']!=1:
         raise ValueError('Formato de gravação de campanha incompatível.')
-    if data['identity']!=identity(campaign):
+    if data['identity'] not in (accepted_identities(campaign) if identities is None else identities):
         raise ValueError('Gravação incompatível: campanha ou regras alteradas.')
     index=data['index']
     if type(index) is not int or not 0<=index<len(campaign.documents):

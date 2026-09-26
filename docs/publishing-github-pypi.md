@@ -4,7 +4,7 @@ O GitHub guarda o código, documentação e versões descarregáveis. O PyPI dis
 o **módulo Python**, permitindo `pip install platform2d`. O jogo Windows fica na
 Release do GitHub; não é enviado como parte do módulo para o PyPI.
 
-Nada foi publicado automaticamente. A versão preparada é **0.23.0**, sob MIT.
+Nada foi publicado automaticamente. A versão preparada é **0.24.0**, sob MIT.
 Em 20/09/2026, as consultas às APIs do PyPI e TestPyPI devolveram 404 para
 `platform2d`. Isto não reserva o nome nem garante que o registo será aceite.
 
@@ -22,7 +22,7 @@ git init -b main
 git add .
 git status
 git diff --cached --stat
-git commit -m "Prepare Platform2D 0.23.0 for public release"
+git commit -m "Prepare Platform2D 0.24.0 for public release"
 git remote add origin https://github.com/TEU_UTILIZADOR/platform2d.git
 git push -u origin main
 ```
@@ -72,7 +72,7 @@ Testa numa pasta vazia:
 ```powershell
 py -3.12 -m venv teste
 .\teste\Scripts\python.exe -m pip install pygame==2.6.1
-.\teste\Scripts\python.exe -m pip install --index-url https://test.pypi.org/simple/ --no-deps platform2d==0.23.0
+.\teste\Scripts\python.exe -m pip install --index-url https://test.pypi.org/simple/ --no-deps platform2d==0.24.0
 .\teste\Scripts\python.exe -m platform2d doctor
 .\teste\Scripts\python.exe -m platform2d new jogo-teste
 Set-Location jogo-teste
@@ -89,11 +89,11 @@ com **Environment name `pypi`**. Os restantes campos mantêm-se.
 Depois de os testes passarem e de reveres os ficheiros:
 
 ```powershell
-git tag -a v0.23.0 -m "Platform2D 0.23.0"
-git push origin v0.23.0
+git tag -a v0.24.0 -m "Platform2D 0.24.0"
+git push origin v0.24.0
 ```
 
-Executa **Publish Python package** novamente, selecionando a **tag `v0.23.0`**
+Executa **Publish Python package** novamente, selecionando a **tag `v0.24.0`**
 no seletor de referência e o destino **`pypi`**. O workflow rejeita publicação
 de produção se a tag não corresponder à versão de `pyproject.toml`.
 
@@ -101,7 +101,7 @@ Após sucesso, confirma numa nova instalação:
 
 ```powershell
 py -3.12 -m venv publico
-.\publico\Scripts\python.exe -m pip install platform2d==0.23.0
+.\publico\Scripts\python.exe -m pip install platform2d==0.24.0
 .\publico\Scripts\python.exe -m platform2d doctor
 ```
 
@@ -111,10 +111,10 @@ precisam de nova versão, atualização das referências e nova tag.
 
 ## 4. Criar a Release no GitHub
 
-Abre **Releases → Draft a new release**, escolhe a tag `v0.23.0`, título
-`Platform2D 0.23.0` e usa o resumo de `CHANGELOG.md`. Anexa:
+Abre **Releases → Draft a new release**, escolhe a tag `v0.24.0`, título
+`Platform2D 0.24.0` e usa o resumo de `CHANGELOG.md`. Anexa:
 
-- `artifacts/releases/Platform2D-SDK-0.23.0.zip`;
+- `artifacts/releases/Platform2D-SDK-0.24.0.zip`;
 - `artifacts/releases/ResgateNaEstacao-1.0.0-Windows-x64.zip`;
 - wheel e `.tar.gz` do motor em `artifacts/publication/`;
 - `artifacts/releases/SHA256SUMS.txt`.
@@ -132,9 +132,9 @@ python -m pip install build twine
 python -m build --outdir artifacts/publication
 python -m twine check --strict artifacts/publication/*
 python tools/check_public_package.py artifacts/publication
-python -m twine upload --repository testpypi artifacts/publication/platform2d-0.23.0*
+python -m twine upload --repository testpypi artifacts/publication/platform2d-0.24.0*
 # Apenas depois de confirmar o ensaio:
-python -m twine upload artifacts/publication/platform2d-0.23.0*
+python -m twine upload artifacts/publication/platform2d-0.24.0*
 ```
 
 Quando pedido, usa `__token__` como utilizador e o token do serviço como

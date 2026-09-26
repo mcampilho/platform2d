@@ -34,7 +34,7 @@ dados de teste separados dos progressos normais do jogador.
 
 ```powershell
 py -3.12 -m venv ambiente
-.\ambiente\Scripts\python.exe -m pip install .\wheels\platform2d-0.23.0-py3-none-any.whl
+.\ambiente\Scripts\python.exe -m pip install .\wheels\platform2d-0.24.0-py3-none-any.whl
 .\ambiente\Scripts\python.exe -m platform2d doctor
 .\ambiente\Scripts\python.exe -m platform2d new primeiro-jogo --name "O meu jogo"
 Set-Location primeiro-jogo

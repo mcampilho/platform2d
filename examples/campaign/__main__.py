@@ -12,6 +12,8 @@ def main():
     parser.add_argument("--frames",type=int)
     parser.add_argument("--screenshot",type=Path)
     parser.add_argument("--save",type=Path,help="Ficheiro de progresso da campanha")
+    from platform2d.i18n import LANGUAGES
+    parser.add_argument("--language",choices=LANGUAGES,default='pt-PT')
     from platform2d.audio.service import add_audio_arguments
     from platform2d.core.control_settings import add_control_arguments
     add_audio_arguments(parser); add_control_arguments(parser)
@@ -35,10 +37,10 @@ def main():
         campaign = CampaignScene(name,ids,documents,settings)
         default_path = default_save_path(args.campaign)
         save_path = args.save or default_path.with_name(default_path.name.replace('world-','campaign-',1))
-        scene = CampaignApp(campaign,save_path)
-        game = Game(scene,settings['bindings'],size=(960,576),title="Platform2D 0.23 - "+name,
+        scene = CampaignApp(campaign,save_path,args.language)
+        game = Game(scene,settings['bindings'],size=(960,576),title="Platform2D 0.24 - "+name,
                     volume=args.volume,muted=args.mute or args.headless,controls_profile="campaign",
-                    controls_path=args.controls_dir/"campaign.controls.json")
+                    controls_path=args.controls_dir/"campaign.controls.json",language=args.language)
         if args.screenshot:
             args.screenshot.parent.mkdir(parents=True,exist_ok=True)
         game.run(args.frames,args.screenshot)

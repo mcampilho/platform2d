@@ -7,7 +7,7 @@ LANGUAGES=('pt-PT','en','es','fr','de','zh-Hans','ar','ja')
 
 
 def main():
-    for domain,output in [('common',ROOT/'platform2d/locales'),('resgate',ROOT/'games/resgate/resgate/locales')]:
+    for domain,output in [('common',ROOT/'platform2d/locales'),('resgate',ROOT/'games/resgate/resgate/locales'),('campaign',ROOT/'examples/campaign/locales'),('editor',ROOT/'platform2d/tools/locales')]:
         messages={code:{} for code in LANGUAGES}
         for number,line in enumerate((ROOT/'translations'/f'{domain}.tsv').read_text(encoding='utf-8').splitlines(),1):
             if not line or line.startswith('#'): continue

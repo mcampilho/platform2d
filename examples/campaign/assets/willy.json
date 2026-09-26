@@ -1,0 +1,8 @@
+{
+  "format": "platform2d.campaign",
+  "version": 1,
+  "name": "Mina das Chaves Perdidas",
+  "stages": [
+    {"id": "lost-keys", "map": "willy-keys.json"}
+  ]
+}

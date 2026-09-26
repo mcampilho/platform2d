@@ -11,6 +11,7 @@ from platform2d.audio.service import SilentAudio,AudioControls
 from .reachability import ReachabilitySearch
 from .adventure_reachability import AdventureSearch
 from .controls_panel import ControlsPanel
+from .editor_i18n import EditorLocale
 from platform2d.rendering.terrain import draw_ramp
 from platform2d.gameplay.ranged_config import weapon_spec,TARGET_DEFAULTS
 from platform2d.gameplay.inventory import ITEMS,CATALOG
@@ -24,22 +25,25 @@ COLORS = {"spawn":(114,232,200),"coin":(255,205,113),"checkpoint":(146,188,244),
           "beacon":(255,205,113),"entry":(114,232,200),"door":(194,166,248),"moving_platform":(100,220,204),"switch":(249,190,102)}
 COLORS.update(guardian=(192,101,126),part=(122,211,245),fuel=(249,188,95),rocket=(190,223,231),pickup=(128,234,182),target=(221,192,116),turret=(245,156,105))
 COLORS.update(crate=(220,170,103),plate=(240,202,114),gate=(232,137,122),water=(84,172,227),air=(179,234,239),ability=(192,150,246))
+COLORS.update(crumble=(191,150,91),conveyor=(99,194,209),patrol=(221,103,126))
 PROFILE_NAMES = {"classic":"Clássico","precision":"Precisão","rooms":"Salas","ranged":"Combate","adventure":"Aventura"}
 
 
 class LevelEditor:
-    def __init__(self, preview_factory, bindings, document=None, default_path="levels/meu-nivel.json", analysis_movement=None, profiles=None, audio=None, controls_dir=None):
+    def __init__(self, preview_factory, bindings, document=None, default_path="levels/meu-nivel.json", analysis_movement=None, profiles=None, audio=None, controls_dir=None, language='pt-PT'):
+        self.locale=EditorLocale(language)
+        self.language=self.locale.translator.language
         self.controls_dir = Path(controls_dir) if controls_dir is not None else None
         self.workspace = None
         self.controls = None
         self.audio = audio or SilentAudio()
-        self.audio_controls = AudioControls(audio) if audio is not None else None
+        self.audio_controls = AudioControls(audio,language) if audio is not None else None
         self.document = document or MapDocument()
         self.preview_factory,self.bindings = preview_factory,bindings
         self.profiles = profiles or {}
         self.default_path = Path(default_path)
         self.screen = pygame.display.set_mode((1280,800))
-        pygame.display.set_caption("Platform2D 0.23 - Atelier - Aventura")
+        pygame.display.set_caption(self.locale.t('editor.caption'))
         self.font = pygame.font.SysFont("segoeui",17)
         self.small = pygame.font.SysFont("consolas",13)
         self.title = pygame.font.SysFont("segoeui",26,bold=True)
@@ -136,7 +140,8 @@ class LevelEditor:
         mode=self.document.data.get('properties',{}).get('traversal')
         expansion_tools={'cargo': [('crate','Caixa (2 t)'),('plate','Placa de peso'),('gate','Porta de carga')],
                          'swim':[('water','Água / corrente'),('air','Bolsa de ar')],
-                         'escape':[], 'explore':[('ability','Salto duplo'),('gate','Porta de capacidade')]}
+                         'escape':[], 'explore':[('ability','Salto duplo'),('gate','Porta de capacidade')],
+                         'willy':[('crumble','Piso quebradiço'),('conveyor','Transportador'),('patrol','Inimigo patrulha')]}
         if self.document.profile=='adventure' and mode in expansion_tools: extras['adventure']=expansion_tools[mode]
         if self.document.profile in {"ranged","adventure"}:
             base = [(kind,"C  Cristal" if kind == "coin" else label) for kind,label in base]
@@ -148,7 +153,8 @@ class LevelEditor:
         campaign=CampaignDocument.load(path) if path else CampaignDocument()
         def open_it():
             self.workspace=CampaignEditor(campaign,self.profiles,audio=self.audio,controls_dir=self.controls_dir,
-                                          on_close=lambda:setattr(self,'workspace',None))
+                                          on_close=lambda:setattr(self,'workspace',None),language=self.language)
+            self.workspace.locale.extra=getattr(self.locale,'extra',None)
         self.protect_unsaved(open_it)
 
     def new_dialog(self):
@@ -318,18 +324,20 @@ class LevelEditor:
         def quantity():
             self.input_dialog("Quantidade",obj.get("quantity",1),lambda text:apply(quantity=int(text)))
         self.choice("Configurar recolhível",[("Tipo: "+CATALOG[item].label,choose_item),
-                    (f"Quantidade: {obj.get('quantity',1)} (máximo {CATALOG[item].limit})",quantity)])
+                    (self.locale.t('editor.quantity_limit',count=obj.get('quantity',1),limit=CATALOG[item].limit),quantity)])
 
     def mission_properties(self):
         props = self.document.data.get("properties",{})
-        labels = {"station":"Estação","garden":"Jardins","ice":"Glacial","reactor":"Reator"}
+        labels = {"station":"Estação","garden":"Jardins","ice":"Glacial","reactor":"Reator",
+                  "observatory":"Observatório"}
         def apply(**changes):
             self.document.update_mission(**changes)
             self.refresh()
             self.mission_properties()
         def themes():
             self.choice("Ambiente da sala",[(label,lambda key=key:apply(theme=key)) for key,label in
-                        [("station","Estação"),("garden","Jardins"),("ice","Glacial"),("reactor","Reator")]])
+                        [("station","Estação"),("garden","Jardins"),("ice","Glacial"),("reactor","Reator"),
+                         ("observatory","Observatório")]])
         items=[("Ambiente: "+labels[props.get("theme","station")],themes),
                ("Disparos: "+("ativos" if props.get("weapon_enabled",True) else "desativados"),
                 lambda:apply(weapon_enabled=not props.get("weapon_enabled",True)))]
@@ -455,11 +463,13 @@ class LevelEditor:
             return
         profile = self.profiles.get(self.document.profile,{})
         self.preview = profile.get("factory",self.preview_factory)(self.document.playable())
+        setter=getattr(self.preview,'set_language',None)
+        if setter: setter(self.language)
         self.preview.audio = self.audio
         if self.controls:
             self.controls.close()
         path = self.controls_dir/(self.document.profile+".controls.json") if self.controls_dir is not None else None
-        self.controls = ControlsPanel(profile.get("bindings",self.bindings),self.document.profile,path)
+        self.controls = ControlsPanel(profile.get("bindings",self.bindings),self.document.profile,path,self.language)
         self.preview.format_controls = self.controls.format_hint
         self.preview_input = self.controls.input
         self.solution_actions = None
@@ -761,20 +771,38 @@ class LevelEditor:
                 self.audio.update(0,paused=(self.audio_controls is not None and not self.audio_controls.focused) or self.preview.paused)
 
     def text(self,text,x,y,color=(183,200,217),font=None):
-        self.screen.blit((font or self.small).render(str(text),True,color),(round(x),round(y)))
+        value=self.locale.literal(text)
+        size=26 if font is self.title else 17 if font is self.font else 13
+        image=self.locale.renderer.render(value,color,size,max(12,self.screen.get_width()-16))
+        self.screen.blit(image,(max(0,min(round(x),self.screen.get_width()-image.get_width()-4)),round(y)))
 
     def wrapped(self,text,x,y,width,color=(183,200,217),font=None,line_height=23):
-        font = font or self.font
+        text=self.locale.literal(text)
+        from platform2d.i18n import visual_text
+        size=26 if font is self.title else 13 if font is self.small else 17
+        measure=self.locale.renderer.font(size)
+        direction=self.locale.translator.metadata['direction']
+        def fits(value): return measure.size(visual_text(value,direction))[0]<=width
         for paragraph in str(text).splitlines():
             line = ""
-            for word in paragraph.split():
-                candidate = (line+" "+word).strip()
-                if font.size(candidate)[0] > width and line:
+            words=list(paragraph) if self.language in ('zh-Hans','ja') else paragraph.split()
+            separator='' if self.language in ('zh-Hans','ja') else ' '
+            for word in words:
+                candidate=(line+separator+word).strip()
+                if not fits(candidate) and line:
                     self.text(line,x,y,color,font)
                     y += line_height
-                    line = word
-                else:
-                    line = candidate
+                    line=word
+                else: line=candidate
+                if not fits(line):
+                    part=''
+                    for char in line:
+                        if not fits(part+char) and part:
+                            self.text(part,x,y,color,font)
+                            y+=line_height
+                            part=char
+                        else: part+=char
+                    line=part
             self.text(line,x,y,color,font)
             y += line_height
         return y
@@ -784,7 +812,7 @@ class LevelEditor:
         pygame.draw.rect(self.screen,(37,81,85) if selected else (30,42,60),rect,border_radius=5)
         pygame.draw.rect(self.screen,(102,218,190) if selected else (53,70,91),rect,1,border_radius=5)
         font = self.small
-        image = font.render(label,True,(225,235,242))
+        image = self.locale.renderer.render(self.locale.literal(label),(225,235,242),13,max(12,rect.width-10))
         self.screen.blit(image,image.get_rect(center=rect.center))
         self.buttons.append((rect,callback))
 
@@ -890,7 +918,7 @@ class LevelEditor:
             self.wrapped("Seleciona um objeto no mapa ou na lista para ajustar posição e tamanho.",1044,156,210,font=self.font)
             self.wrapped("O corpo do jogador mede 24×30. W/H dos objetos definem a área de interação.",1044,277,210,color=(128,150,174),font=self.font)
         objects = self.document.data["objects"]
-        self.text(f"OBJETOS ({len(objects)})",1044,466,(111,223,192))
+        self.text(self.locale.t('editor.object_count',count=len(objects)),1044,466,(111,223,192))
         self.object_scroll = min(self.object_scroll,max(0,len(objects)-5))
         for offset,obj in enumerate(objects[self.object_scroll:self.object_scroll+5]):
             index = self.object_scroll+offset
@@ -1043,7 +1071,7 @@ class LevelEditor:
             spacing=min(25,350/max(1,len(tool_list)-1))
             for index,(tool,label) in enumerate(tool_list):
                 self.button(label,(16,142+index*spacing,167,spacing-2),lambda tool=tool:self.choose_tool(tool),self.tool == tool)
-            self.text("PERFIL: "+PROFILE_NAMES[self.document.profile],18,542,(111,223,192))
+            self.text(self.locale.t('editor.profile',name=self.locale.literal(PROFILE_NAMES[self.document.profile])),18,542,(111,223,192))
             if isinstance(self.document,WorldDocument):
                 self.button("Salas…",(16,567,167,32),self.room_dialog)
                 self.text(self.document.active_room[:22],18,608)
@@ -1058,8 +1086,8 @@ class LevelEditor:
             self.draw_inspector()
             errors = sum(i.severity == "error" for i in self.issues)
             warnings = sum(i.severity == "warning" for i in self.issues)
-            self.text(f"{errors} erros / {warnings} avisos",18,745,(247,153,159) if errors else (128,222,188))
-            self.text(self.status[:121],201,745)
+            self.text(self.locale.t('editor.issue_count',errors=errors,warnings=warnings),18,745,(247,153,159) if errors else (128,222,188))
+            self.text(self.status,201,745)
             path = str(self.document.path) if self.document.path else "Ainda sem ficheiro · Ctrl+S para guardar"
             self.text(path[-140:],18,776,(112,143,167))
         if self.modal:

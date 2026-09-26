@@ -8,6 +8,7 @@ from platform2d.audio import SilentAudio
 from platform2d.gameplay.campaign import CampaignProgress
 from platform2d.gameplay.inventory import upgraded_weapon
 from platform2d.tools.editor_model import MapDocument
+from .locale import CampaignLocale
 
 
 def load_campaign(path):
@@ -46,7 +47,12 @@ class CampaignScene:
         self.settings = deepcopy(settings)
         self.audio = SilentAudio()
         self.format_controls = str
+        self.locale = CampaignLocale()
         self.reset()
+
+    def set_language(self,language):
+        self.locale=CampaignLocale(language)
+        self.active.locale=self.locale
 
     @property
     def paused(self):
@@ -56,6 +62,7 @@ class CampaignScene:
         self.progress.reset()
         self.totals = dict(shots=0,deaths=0,elapsed=0)
         self.active = create_scene(self.documents[0],self.settings)
+        self.active.locale=self.locale
 
     def update(self,dt,actions):
         if "reset" in actions.pressed:
@@ -75,6 +82,7 @@ class CampaignScene:
                 next_scene.format_controls = self.format_controls
                 self.progress.advance()
                 self.active = next_scene
+                self.active.locale=self.locale
             return
         self.active.update(dt,actions)
         if self.active.won and self.progress.complete():
@@ -84,15 +92,16 @@ class CampaignScene:
     def draw(self,surface,alpha):
         self.active.format_controls = self.format_controls
         self.active.draw(surface,alpha)
-        label = f"CAMPANHA / {self.progress.index+1} DE {len(self.documents)} / {self.name}"
+        t=self.locale.t
+        label = t('campaign.counter',current=self.progress.index+1,total=len(self.documents),name=self.locale.literal(self.name))
         pygame.draw.rect(surface,(9,17,29),(0,0,625,33))
-        self.active.text(surface,label,24,15,(118,220,205))
+        self.locale.draw(surface,label,(24,7,590,26),18,(118,220,205))
         if self.active.won:
             pygame.draw.rect(surface,(9,17,29),(120,195,720,230),border_radius=12)
-            title = "Campanha concluída!" if self.progress.finished else "Nível concluído!"
-            self.active.text(surface,title,245,217,(220,245,237),self.active.large)
-            self.active.text(surface,f"TOTAL: {self.totals['shots']} tiros · {self.totals['deaths']} mortes · {self.totals['elapsed']:.1f}s",250,285)
-            message = "F2: recomeçar a campanha" if self.progress.finished else "[Enter] próximo nível · melhorias e kits conservados"
-            self.active.text(surface,message,220,330,(146,225,205))
+            title = t('campaign.complete' if self.progress.finished else 'level.complete')
+            self.locale.draw(surface,title,(150,211,660,56),38,(220,245,237),'center')
+            self.locale.draw(surface,t('campaign.totals',shots=self.totals['shots'],deaths=self.totals['deaths'],elapsed=f"{self.totals['elapsed']:.1f}"),(160,285,640,32),20,align='center')
+            message = t('campaign.restart' if self.progress.finished else 'campaign.next_hint')
+            self.locale.draw(surface,message,(155,330,650,30),18,(146,225,205),'center')
             if not self.progress.finished:
-                self.active.text(surface,"Próximo: "+self.documents[self.progress.index+1].data['name'],220,365)
+                self.locale.draw(surface,t('campaign.next',name=self.locale.literal(self.documents[self.progress.index+1].data['name'])),(160,365,640,30),18,align='center')

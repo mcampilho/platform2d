@@ -191,6 +191,8 @@ A grelha aceita rampas / e barra invertida, de 45° e atravessáveis por baixo. 
 `gameplay/cargo.py` gere caixas físicas e peso; `actors/exploration.py` acrescenta controladores de água e salto duplo. `ExpansionScene` compõe estes módulos com os pontos de extensão de Aventura, as regras de oxigénio, perseguição e portas. `prepare_world` fornece geometria dinâmica antes da física; o mapa original é reposto depois da atualização. O progresso acrescenta posições de caixas apenas ao modo Carga e inclui capacidades nos IDs recolhidos. O editor reconhece os novos objetos e declara F8 inconclusivo. Consulta [aprender com os quatro estilos](learning-new-horizons.md).
 
 
-## SDK e aplicação independente (0.23)
+## SDK e aplicação independente (0.23–0.24)
 
-`platform2d.__main__` gera um projeto de jogo a partir de modelos incluídos na wheel. `paths.user_data_dir` separa dados do utilizador de recursos instalados. `games/resgate` é um pacote próprio que declara `platform2d==0.23.0` como dependência e não importa exemplos. O seu construtor Windows executa PyInstaller sobre os pacotes instalados, com recursos explícitos, e permite verificar os percursos também dentro do executável.
+`platform2d.__main__` gera um projeto de jogo a partir de modelos incluídos na wheel. `paths.user_data_dir` separa dados do utilizador de recursos instalados. `games/resgate` é um pacote próprio que declara `platform2d==0.24.0` como dependência e não importa exemplos. O seu construtor Windows executa PyInstaller sobre os pacotes instalados, com recursos explícitos, e permite verificar os percursos também dentro do executável.
+
+`rendering.sprite_animation.SpriteAtlas` divide uma imagem em células, escolhe clips por tempo, conserva uma âncora estável e pré-calcula a direção espelhada. O manifesto de tema pode declarar estes atlas no bloco `sprites`; o carregamento valida a configuração sem obrigar temas antigos a fornecê-la.

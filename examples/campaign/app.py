@@ -4,12 +4,20 @@ import pygame
 from platform2d.audio import SilentAudio
 from platform2d.gameplay.json_slot import JsonSlot
 from platform2d.rendering.feedback import Feedback
-from .progress import capture,validate,restore
+from platform2d.rendering.transition import MomentTransitions
+from .progress import accepted_identities,capture,identity,validate,restore
+from .locale import CampaignLocale
 
 
 class CampaignApp:
-    def __init__(self,campaign,save_path=None):
+    def __init__(self,campaign,save_path=None,language='pt-PT'):
         self.campaign=campaign
+        # Campaign documents are immutable while playing. Preparing their
+        # signatures here keeps checkpoint autosaves out of the frame budget.
+        self.save_identity=identity(campaign)
+        self.save_identities=accepted_identities(campaign,self.save_identity)
+        self.locale=campaign.locale=CampaignLocale(language)
+        campaign.active.locale=self.locale
         self.slot=JsonSlot(save_path)
         self.audio=SilentAudio()
         self.format_controls=str
@@ -22,11 +30,15 @@ class CampaignApp:
         self.notice=''
         self.notice_time=0
         self.feedback=Feedback()
+        self.transitions=MomentTransitions()
         self.buttons=[]
         self.pending=lambda:None
         self.confirm_text=''
         self.save_label=''
         self.refresh_save()
+
+    def validate_save(self,data):
+        return validate(data,self.campaign,self.save_identities)
 
     @property
     def paused(self):
@@ -38,10 +50,10 @@ class CampaignApp:
 
     def refresh_save(self):
         try:
-            data=self.slot.read(lambda d:validate(d,self.campaign))
-            self.save_label=f"Gravação: nível {data['index']+1} / {len(self.campaign.documents)}"
+            data=self.slot.read(self.validate_save)
+            self.save_label=self.locale.t('save.present',current=data['index']+1,total=len(self.campaign.documents))
         except (ValueError,OSError):
-            self.save_label='Sem gravação válida' if self.slot.exists else 'Ainda não existe gravação'
+            self.save_label=self.locale.t('save.invalid' if self.slot.exists else 'save.missing')
 
     def message(self,text):
         self.notice=text
@@ -58,41 +70,43 @@ class CampaignApp:
 
     def request_new(self):
         if self.started or self.slot.exists:
-            self.confirm('Reiniciar a campanha e substituir a gravação compatível?',self.new_game)
+            self.confirm(self.locale.t('confirm.new'),self.new_game)
         else:
             self.new_game()
 
     def new_game(self):
         self.campaign.reset(); self.started=True
         self.menu(None); self.feedback.clear(); self.feedback.fade=.35
+        self.transitions.enter()
         self.save()
 
     def save(self):
         if not self.started: return False
         try:
-            self.slot.write(capture(self.campaign),lambda d:validate(d,self.campaign))
-            self.message('Progresso guardado. Retoma no checkpoint com vida completa.')
+            self.slot.write(capture(self.campaign,self.save_identity),self.validate_save)
+            self.message(self.locale.t('save.done'))
             self.refresh_save()
             return True
-        except (ValueError,OSError) as error:
-            self.message('Não foi possível guardar: '+str(error))
+        except (ValueError,OSError):
+            self.message(self.locale.t('save.failed'))
             return False
 
     def load(self):
         try:
-            data=self.slot.read(lambda d:validate(d,self.campaign))
+            data=self.slot.read(self.validate_save)
             restore(data,self.campaign)
-        except (ValueError,OSError) as error:
-            self.message('Não foi possível continuar: '+str(error))
+        except (ValueError,OSError):
+            self.message(self.locale.t('load.failed'))
             return False
         self.started=True; self.menu(None)
         self.feedback.clear(); self.feedback.fade=.35
-        self.message('Campanha retomada no checkpoint. Vida reposta.')
+        self.transitions.enter()
+        self.message(self.locale.t('load.done'))
         return True
 
     def request_load(self):
         if self.started:
-            self.confirm('Carregar a gravação e descartar alterações não guardadas?',self.load)
+            self.confirm(self.locale.t('confirm.load'),self.load)
         else: self.load()
 
     def options(self):
@@ -109,7 +123,9 @@ class CampaignApp:
 
     def effects(self):
         self.feedback.enabled=not self.feedback.enabled
+        self.transitions.enabled=self.feedback.enabled
         self.feedback.clear()
+        self.transitions.clear()
 
     def save_quit(self):
         if self.save(): self.quit_requested=True
@@ -120,24 +136,25 @@ class CampaignApp:
         else: self.quit_requested=True
 
     def choices(self):
+        t=self.locale.t
         if self.mode=='title':
-            return [('Nova campanha',self.request_new),('Continuar gravação',self.request_load),
-                    ('Opções',self.options),('Sair',self.quit)]
+            return [(t('menu.new'),self.request_new),(t('menu.continue'),self.request_load),
+                    (t('menu.options'),self.options),(t('menu.leave'),self.quit)]
         if self.mode=='pause':
-            return [('Retomar',lambda:self.menu(None)),('Guardar progresso',self.save),
-                    ('Carregar gravação',self.request_load),('Nova campanha',self.request_new),
-                    ('Opções',self.options),('Sair',self.quit)]
+            return [(t('menu.resume'),lambda:self.menu(None)),(t('menu.save'),self.save),
+                    (t('menu.load'),self.request_load),(t('menu.new'),self.request_new),
+                    (t('menu.options'),self.options),(t('menu.leave'),self.quit)]
         if self.mode=='options':
-            return [(f'Volume −  ({self.audio.volume:.0%})',lambda:self.volume(-.1)),
-                    ('Volume +',lambda:self.volume(.1)),
-                    ('Som: '+('desligado' if self.audio.muted else 'ligado'),self.mute),
-                    ('Efeitos visuais: '+('ligados' if self.feedback.enabled else 'reduzidos'),self.effects),
-                    ('Configurar comandos (F3)',self.open_controls),('Voltar',lambda:self.menu(self.return_mode))]
+            return [(t('menu.volume_down',value=f'{self.audio.volume:.0%}'),lambda:self.volume(-.1)),
+                    (t('menu.volume_up'),lambda:self.volume(.1)),
+                    (t('menu.sound',value=t('menu.sound_off' if self.audio.muted else 'menu.sound_on')),self.mute),
+                    (t('menu.effects',value=t('menu.effects_on' if self.feedback.enabled else 'menu.effects_low')),self.effects),
+                    (t('menu.controls'),self.open_controls),(t('menu.back'),lambda:self.menu(self.return_mode))]
         if self.mode=='confirm':
-            return [('Confirmar',self.pending),('Cancelar',lambda:self.menu(self.return_mode))]
+            return [(t('menu.confirm'),self.pending),(t('menu.cancel'),lambda:self.menu(self.return_mode))]
         if self.mode=='quit':
-            return [('Guardar e sair',self.save_quit),('Sair sem guardar',lambda:setattr(self,'quit_requested',True)),
-                    ('Cancelar',lambda:self.menu('pause'))]
+            return [(t('menu.save_quit'),self.save_quit),(t('menu.quit_unsaved'),lambda:setattr(self,'quit_requested',True)),
+                    (t('menu.cancel'),lambda:self.menu('pause'))]
         return []
 
     def handle_event(self,event):
@@ -195,8 +212,10 @@ class CampaignApp:
         current=self.campaign.active
         screen_point=getattr(current,"world_to_screen",lambda point:point)
         self.feedback.update(dt)
+        self.transitions.update(dt)
         if current is not old:
             self.feedback.clear(); self.feedback.fade=.35
+            self.transitions.enter()
         else:
             for obj in current.level.objects:
                 if obj['id'] in current.collected_items-collected:
@@ -207,10 +226,14 @@ class CampaignApp:
                 self.feedback.flash=.2
             if current.deaths>deaths:
                 self.feedback.clear(); self.feedback.fade=.35
+                self.transitions.enter()
             if current.active_checkpoint!=checkpoint:
-                self.feedback.burst(screen_point((current.player.body.x+12,current.player.body.y)),(125,224,255))
+                point=screen_point((current.player.body.x+12,current.player.body.y))
+                self.feedback.burst(point,(125,224,255))
+                self.transitions.checkpoint(point)
             if current.won and not won:
                 self.feedback.burst((480,215),(125,242,200))
+                self.transitions.complete()
         if current is not old or current.active_checkpoint!=checkpoint or (current.won and not won) or getattr(current,"mission_marker",None)!=marker:
             self.save()
 
@@ -220,6 +243,7 @@ class CampaignApp:
         self.campaign.draw(surface,alpha)
         if self.mode is None:
             self.feedback.draw(surface)
+            self.transitions.draw(surface)
         else:
             shade=pygame.Surface(surface.get_size(),pygame.SRCALPHA); shade.fill((5,13,25,235)); surface.blit(shade,(0,0))
             if self.feedback.enabled:
@@ -227,22 +251,19 @@ class CampaignApp:
                     x=(i*173+math.sin(self.feedback.age*.3+i)*12)%960
                     y=(i*91+self.feedback.age*5)%576
                     pygame.draw.circle(surface,(39,88,107),(round(x),round(y)),2)
-            text=self.campaign.active.text
-            title={'title':self.campaign.name,'pause':'Em pausa','options':'Opções','confirm':'Confirmar','quit':'Sair da campanha'}[self.mode]
-            font=self.campaign.active.large
-            rendered=font.render(title,True,(219,244,238))
-            if rendered.get_width()>860: rendered=pygame.transform.smoothscale(rendered,(860,rendered.get_height()))
-            surface.blit(rendered,rendered.get_rect(center=(480,70)))
-            subtitle=self.confirm_text if self.mode=='confirm' else self.save_label if self.mode=='title' else 'O jogo fica suspenso enquanto escolhes.'
-            text(surface,subtitle,160,114,(150,188,201))
+            t=self.locale.t
+            title=self.locale.literal(self.campaign.name) if self.mode=='title' else t('menu.'+self.mode)
+            self.locale.draw(surface,title,(50,45,860,55),40,(219,244,238),'center')
+            subtitle=self.confirm_text if self.mode=='confirm' else self.save_label if self.mode=='title' else t('menu.suspended')
+            self.locale.draw(surface,subtitle,(120,114,720,33),18,(150,188,201),'center')
             self.buttons=[]
             for i,(label,callback) in enumerate(self.choices()):
                 rect=pygame.Rect(240,157+i*46,480,39); self.buttons.append(rect)
                 pygame.draw.rect(surface,(34,85,85) if i==self.selected else (20,38,54),rect,border_radius=7)
                 pygame.draw.rect(surface,(116,226,200) if i==self.selected else (42,67,82),rect,1,border_radius=7)
-                text(surface,label,rect.x+22,rect.y+12,(223,239,236))
-            text(surface,'↑ / ↓ escolher · Enter confirmar · rato disponível · Esc voltar',210,476)
-            if self.mode=='options': text(surface,'Opções de som e efeitos aplicam-se a esta sessão.',245,449,(139,170,188))
+                self.locale.draw(surface,label,rect.inflate(-44,0).move(0,10),20)
+            self.locale.draw(surface,t('menu.help'),(120,476,720,31),16,align='center')
+            if self.mode=='options': self.locale.draw(surface,t('menu.options_help'),(120,449,720,26),16,(139,170,188),'center')
         if self.notice_time:
             active=self.campaign.active
             if self.mode is not None or active.won or getattr(active,'launch_time',None) is not None:
@@ -252,7 +273,4 @@ class CampaignApp:
             else:
                 y=218 if getattr(active,'mode',None)=='jetpack' else 244
             pygame.draw.rect(surface,(12,32,43),(16,y,928,39),border_radius=6)
-            # Bounded lines avoid clipping diagnostics onto the game controls.
-            text=self.campaign.active.text
-            text(surface,self.notice[:112],28,y+5,(242,209,143))
-            if len(self.notice)>112: text(surface,self.notice[112:224],28,y+22,(242,209,143))
+            self.locale.draw(surface,self.notice,(28,y+6,904,30),18,(242,209,143))

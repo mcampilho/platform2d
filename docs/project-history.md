@@ -46,6 +46,8 @@ A versão **0.22.0 — Novos Horizontes** acrescenta quatro níveis: **Fábrica 
 
 A versão **0.23.0** prepara o **SDK instalável sob licença MIT**, o comando `python -m platform2d new` e o jogo independente **Resgate na Estação**, com três setores e distribuição Windows. Consulta [instalação e criação de jogos](using-platform2d.md), [distribuição](distributing-platform2d.md) e [aprendizagem](learning-independent-game.md). Os ZIPs ficam em `artifacts/releases`; **Jogar-Resgate.cmd** abre a aplicação independente.
 
+A versão **0.24.0** consolida oito idiomas, direção visual, temas recarregáveis, câmara e transições, orientação de objetivos e a campanha de 13 níveis. Acrescenta atlas animados declarados nos temas e aplica-os ao guardião, vegetação e chaves da **Mina das Chaves Perdidas**. A ferramenta `platform2d theme check --preview` valida e apresenta estes sprites antes de os integrar num jogo.
+
 ## Criar níveis no Atelier
 
 Abre **Editor.cmd** ou executa:

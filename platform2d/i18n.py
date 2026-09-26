@@ -1,5 +1,7 @@
 """Per-game UTF-8 catalogues and rendering, without process-global locale state."""
 import json
+from collections import OrderedDict
+from functools import lru_cache
 from pathlib import Path
 from string import Formatter
 
@@ -65,6 +67,7 @@ class Translator:
         return template.format_map(values)
 
 
+@lru_cache(maxsize=1024)
 def visual_text(text, direction='ltr'):
     if direction == 'ltr':
         return text
@@ -81,10 +84,14 @@ def visual_text(text, direction='ltr'):
 
 
 class TextRenderer:
+    MAX_RENDER_CACHE_BYTES = 8 * 1024 * 1024
+
     def __init__(self, translator, font_folder):
         self.translator = translator
         self.folder = Path(font_folder)
         self.cache = {}
+        self._render_cache = OrderedDict()
+        self._render_cache_bytes = 0
 
     def font(self, size):
         import pygame
@@ -95,12 +102,26 @@ class TextRenderer:
         return self.cache[key]
 
     def render(self, text, color, size=24, max_width=None):
-        text = visual_text(text, self.translator.metadata['direction'])
+        metadata = self.translator.metadata
+        key = (metadata['font'], metadata['direction'], text, tuple(color), size, max_width)
+        cached = self._render_cache.get(key)
+        if cached is not None:
+            self._render_cache.move_to_end(key)
+            return cached
+        text = visual_text(text, metadata['direction'])
         # Fit complete messages without cutting translations or stretching glyphs.
         while True:
             font = self.font(size)
             if max_width is None or font.size(text)[0] <= max_width:
-                return font.render(text, True, color)
+                image = font.render(text, True, color)
+                image_bytes = image.get_width() * image.get_height() * image.get_bytesize()
+                if image_bytes <= self.MAX_RENDER_CACHE_BYTES:
+                    while self._render_cache and self._render_cache_bytes + image_bytes > self.MAX_RENDER_CACHE_BYTES:
+                        _, old = self._render_cache.popitem(last=False)
+                        self._render_cache_bytes -= old.get_width() * old.get_height() * old.get_bytesize()
+                    self._render_cache[key] = image
+                    self._render_cache_bytes += image_bytes
+                return image
             if size <= 12:
                 raise ValueError('Translated text does not fit; wrap it or enlarge its area')
             size -= 1

@@ -65,10 +65,10 @@ class ExpansionTests(unittest.TestCase):
         campaign=CampaignScene(name,ids,docs,settings)
         return campaign,campaign.active
 
-    def test_twelve_stages_preserve_original_eight(self):
+    def test_thirteen_stages_preserve_original_eight(self):
         _,_,old=load_campaign(ASSETS/'odyssey-duel.json')
         _,_,new=load_campaign(ASSETS/'odyssey-horizons.json')
-        self.assertEqual(len(new),12)
+        self.assertEqual(len(new),13)
         self.assertEqual([d.snapshot() for d in old],[d.snapshot() for d in new[:8]])
 
     def test_pause_freezes_environment(self):

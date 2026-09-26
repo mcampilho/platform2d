@@ -11,7 +11,7 @@ os.environ['PYGAME_HIDE_SUPPORT_PROMPT']='1'
 import pygame
 from examples.campaign.scene import CampaignScene,load_campaign
 from examples.campaign.app import CampaignApp
-from examples.campaign.progress import capture,restore,validate
+from examples.campaign.progress import _identity,capture,restore,validate
 from platform2d.gameplay.json_slot import JsonSlot
 from platform2d.core.input import Actions
 from platform2d.core.game import Game
@@ -86,11 +86,21 @@ class CampaignReleaseTests(unittest.TestCase):
         data=capture(self.c)
         self.c.settings['bindings']['shoot']=['q']
         validate(data,self.c)
+        self.c.documents[0].data.setdefault('properties',{})['theme']='garden'
+        validate(data,self.c)
         self.c.settings['movement']['speed']+=1
         with self.assertRaises(ValueError): validate(data,self.c)
         self.c.settings['movement']['speed']-=1
         self.c.documents[0].data['name']='changed'
         with self.assertRaises(ValueError): validate(data,self.c)
+
+    def test_legacy_save_survives_one_visual_theme_change(self):
+        data=capture(self.c)
+        maps=deepcopy([document.data for document in self.c.documents])
+        data['identity']=_identity(self.c,maps)
+        props=self.c.documents[0].data.setdefault('properties',{})
+        props['theme']='garden' if props.get('theme')!='garden' else 'observatory'
+        validate(data,self.c)
 
     def test_disk_roundtrip_and_invalid_file_is_preserved(self):
         with tempfile.TemporaryDirectory() as folder:
@@ -170,6 +180,13 @@ class CampaignReleaseTests(unittest.TestCase):
         self.app.update(1/60,Actions(pressed=frozenset({'save_progress'})))
         self.assertEqual(self.app.slot.memory['inventory'],{})
 
+    def test_checkpoint_autosave_reuses_prepared_campaign_identity(self):
+        self.app.new_game(); self.app.slot.memory=None
+        with patch('examples.campaign.progress.accepted_identities',side_effect=AssertionError('slow identity rebuild')):
+            self.c.active.player.respawn((490,482))
+            self.app.update(1/60,Actions())
+        self.assertEqual(self.app.slot.memory['stage']['checkpoint'],'safe-point')
+
     def test_failed_load_keeps_current_scene_and_failed_save_does_not_quit(self):
         self.app.new_game(); original=self.c.active
         self.app.slot.memory={'invalid':True}
@@ -183,6 +200,16 @@ class CampaignReleaseTests(unittest.TestCase):
         self.app.draw(surface,1)
         self.app.handle_event(pygame.event.Event(pygame.MOUSEBUTTONDOWN,button=1,pos=self.app.buttons[3].center))
         self.assertFalse(self.app.feedback.enabled)
+        self.assertFalse(self.app.transitions.enabled)
+
+    def test_campaign_moments_start_presentation_transitions(self):
+        self.app.new_game(); self.assertEqual(self.app.transitions.kind,'enter')
+        self.app.transitions.clear(); s=self.c.active
+        s.player.respawn((490,482)); self.app.update(1/60,Actions())
+        self.assertEqual(self.app.transitions.kind,'checkpoint')
+        self.app.transitions.clear(); s.destroyed.update(o['id'] for o in s.objects)
+        s.player.respawn((910,482)); self.app.update(1/60,Actions())
+        self.assertEqual(self.app.transitions.kind,'complete')
 
     def test_visuals_are_bounded_and_do_not_change_game_state(self):
         feedback=Feedback()

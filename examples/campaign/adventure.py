@@ -7,6 +7,7 @@ from platform2d.rendering.animation import Clip
 from platform2d.rendering.parallax import draw_parallax
 from platform2d.rendering.rocket import component,vehicle,METAL,FUEL
 from platform2d.rendering.action_pose import draw_actor
+from platform2d.rendering.guidance import ObjectiveGuide
 from platform2d.world.camera import Camera
 
 
@@ -25,6 +26,7 @@ class AdventureScene(RangedScene):
         self.camera=Camera((960,480),(level.width,level.height))
         self.world_surface=pygame.Surface((level.width,level.height),pygame.SRCALPHA)
         self.viewport=pygame.Surface((960,480))
+        self.objective_guide=ObjectiveGuide()
         self.update_camera(0,True)
 
     def reset(self):
@@ -45,6 +47,24 @@ class AdventureScene(RangedScene):
     def world_to_screen(self,point):
         if self.scroll=='none': return point
         return point[0]-self.camera.x,point[1]-self.camera.y+96
+
+    def guidance_target(self):
+        """Nearest required point; mechanisms and puzzle answers stay unmarked."""
+        candidates=[]
+        for obj in self.level.objects:
+            kind=obj['type']
+            if kind=='coin' and obj['id'] not in self.collected_items:
+                candidates.append(obj)
+            elif kind in {'target','turret','guardian'} and obj['id'] not in self.destroyed:
+                candidates.append(obj)
+            elif kind=='ability' and obj['id'] not in self.collected_items:
+                candidates.append(obj)
+        if not candidates and self.objectives_ready:
+            candidates=[o for o in self.level.objects if o['type']=='goal']
+        if not candidates: return None
+        b=self.player.body
+        obj=min(candidates,key=lambda o:(o['x']-b.x)**2+(o['y']-b.y)**2)
+        return obj['x']+obj.get('w',24)/2,obj['y']+obj.get('h',30)/2
 
     def freeze(self):
         super().freeze()
@@ -129,7 +149,7 @@ class AdventureScene(RangedScene):
         vehicle(surface,(x,y,48,86),state)
         if self.launch_time is not None:
             pygame.draw.polygon(surface,(255,206,103),[(x+8,y+87),(x+24,y+135),(x+40,y+87)])
-        self.text(surface,f'COMB. {len(state.fuelled)}/{len(state.fuel)}',x-17,obj['y']+95)
+        self.text(surface,self.tr('rocket.fuel','COMB. {current}/{total}',current=len(state.fuelled),total=len(state.fuel)),x-17,obj['y']+95)
         b=self.player.body
         px,py=b.interpolated(alpha)
         if state.carrying:
@@ -140,6 +160,14 @@ class AdventureScene(RangedScene):
         if self.player.controller.motion_state=='fly':
             pygame.draw.polygon(surface,(255,170,92),[(px+6,py+28),(px+12,py+43),(px+18,py+28)])
 
+    def draw_scrolling_background(self,surface,camera):
+        """Draw the depth layers behind a scrolling level.
+
+        Individual adventures can replace this hook with a painted panorama
+        without having to duplicate the camera and HUD drawing code.
+        """
+        draw_parallax(surface,camera,self.level.properties.get('theme','station'))
+
     def draw(self,surface,alpha):
         if self.scroll=='none':
             self.draw_world(surface,alpha)
@@ -148,8 +176,11 @@ class AdventureScene(RangedScene):
             pygame.draw.rect(surface,(12,23,37),(0,96,960,157))
             self.text(surface,'BASE ORBITAL · MONTA O FOGUETÃO, ABASTECE E PARTE',24,110,(132,229,214))
             self.text(surface,'Mantém SALTAR para voar. Transporta uma carga de cada vez. [E] entregar / partir.',24,137)
-            self.text(surface,f'PEÇAS {len(self.rocket.delivered)}/{len(self.rocket.parts)}   COMBUSTÍVEL {len(self.rocket.fuelled)}/{len(self.rocket.fuel)}',24,167)
-            self.text(surface,self.inventory_notice if self.inventory_notice_time else (f'Seguinte: {self.rocket.part_name(self.rocket.next_part)} · recolhe a peça assinalada.' if self.rocket.next_part else 'Recolhe combustível: a cor âmbar sobe no foguetão.'),24,199)
+            self.text(surface,self.tr('rocket.status','PEÇAS {parts}/{parts_total}   COMBUSTÍVEL {fuel}/{fuel_total}',parts=len(self.rocket.delivered),parts_total=len(self.rocket.parts),fuel=len(self.rocket.fuelled),fuel_total=len(self.rocket.fuel)),24,167)
+            part=self.rocket.part_name(self.rocket.next_part) if self.rocket.next_part else None
+            locale=getattr(self,'locale',None)
+            next_hint=self.tr('rocket.next','Seguinte: {part} · recolhe a peça assinalada.',part=locale.literal(part) if locale else part) if part else 'Recolhe combustível: a cor âmbar sobe no foguetão.'
+            self.text(surface,self.inventory_notice if self.inventory_notice_time else next_hint,24,199)
             if self.launch_time is not None:
                 self.text(surface,'RUMO AO PLANETA AURORA…',290,238,(250,217,146),self.title)
         else:
@@ -161,12 +192,17 @@ class AdventureScene(RangedScene):
                 pygame.draw.line(self.world_surface,(178,241,219),(b.x+b.w/2,b.y+15),(edge,top+2),3)
                 pygame.draw.circle(self.world_surface,(250,217,148),(round(edge),round(top+2)),3)
             x,y=self.camera.interpolated(alpha)
-            draw_parallax(self.viewport,(0,0) if getattr(self,'reduced_effects',False) else (x,y),self.level.properties.get('theme','station'))
+            background_camera=(0,0) if getattr(self,'reduced_effects',False) else (x,y)
+            self.draw_scrolling_background(self.viewport,background_camera)
             self.viewport.blit(self.world_surface,(-round(x),-round(y)))
             surface.fill((9,17,29)); surface.blit(self.viewport,(0,96))
+            target=self.guidance_target()
+            if target is not None:
+                self.objective_guide.draw(surface,self.world_to_screen(target),(0,96,960,459),
+                                          self.elapsed,getattr(self,'reduced_effects',False))
             self.text(surface,self.level.name,24,35,(232,241,247),self.title)
             got=sum(o['id'] in self.collected_items for o in self.coins)
-            self.text(surface,f'CRISTAIS {got}/{len(self.coins)}   VIDA {self.health.remaining}/5',665,43)
+            self.text(surface,self.tr('hud.crystals_health','CRISTAIS {current}/{total}   VIDA {health}/5',current=got,total=len(self.coins),health=self.health.remaining),665,43)
             hint='Aproxima-te de uma borda no ar para agarrar. SALTAR / [E]: subir. BAIXO: largar.' if self.mode=='ledge' else 'Explora o vale e recolhe todos os cristais. A câmara acompanha-te.'
             self.text(surface,hint,24,77)
             self.text(surface,'F3: comandos · R: checkpoint · F2: recomeçar',24,555)

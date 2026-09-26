@@ -1,4 +1,4 @@
-# Desenvolver jogos com Platform2D 0.23
+# Desenvolver jogos com Platform2D 0.24
 
 Platform2D é um módulo Python instalável, construído sobre Pygame. Fornece ciclo
 de jogo com passo fixo, input e gamepad, física, personagens, câmaras, áudio,
@@ -27,7 +27,7 @@ uma pasta de trabalho:
 
 ```powershell
 py -3.12 -m venv .venv
-.venv\Scripts\python.exe -m pip install "C:\caminho\platform2d-0.23.0-py3-none-any.whl"
+.venv\Scripts\python.exe -m pip install "C:\caminho\platform2d-0.24.0-py3-none-any.whl"
 .venv\Scripts\python.exe -m platform2d doctor
 .venv\Scripts\python.exe -m platform2d new meu-jogo --name "A minha aventura"
 cd meu-jogo
@@ -53,7 +53,9 @@ O uso de ambientes virtuais e instalação de wheels locais segue o
 ## O que alterar no projeto gerado
 
 `mygame/scene.py` contém um jogo mínimo completo: movimento, salto, uma recolha
-e uma saída. `mygame/__main__.py` configura a janela e as teclas.
+e uma saída. `mygame/__main__.py` configura a janela e as teclas. O ficheiro
+`mygame/theme.json` controla a paleta e já pode ser verificado com
+`python -m platform2d theme check mygame/theme.json --preview theme-preview.png`.
 `pyproject.toml` declara o motor como dependência. Muda o nome de distribuição,
 o título e o ID de dados do utilizador quando criares o teu jogo.
 
@@ -112,8 +114,8 @@ Inclui mapas, imagens e sons no pacote do jogo, declara-os em
 `importlib.resources`. Guarda preferências e progresso em
 `user_data_dir('IDDoTeuJogo')`, nunca junto do executável instalado.
 
-Nas tuas dependências, fixa uma versão testada (`platform2d==0.23.0`) ou um
-intervalo menor (`platform2d>=0.23,<0.24`). Enquanto o motor estiver em 0.x,
+Nas tuas dependências, fixa uma versão testada (`platform2d==0.24.0`) ou um
+intervalo menor (`platform2d>=0.24,<0.25`). Enquanto o motor estiver em 0.x,
 não se promete compatibilidade automática entre versões menores. Testa os
 teus percursos e gravações antes de atualizar.
 

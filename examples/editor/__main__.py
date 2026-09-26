@@ -12,6 +12,8 @@ def main():
     parser.add_argument("--headless",action="store_true")
     parser.add_argument("--frames",type=int)
     parser.add_argument("--screenshot",type=Path)
+    from platform2d.i18n import LANGUAGES
+    parser.add_argument("--language",choices=LANGUAGES,default='pt-PT')
     os.environ.setdefault("PYGAME_HIDE_SUPPORT_PROMPT", "1")
     from platform2d.audio.service import add_audio_arguments
     add_audio_arguments(parser)
@@ -41,12 +43,14 @@ def main():
             else:
                 document=CampaignDocument.load(Path(__file__).parents[1]/'campaign/assets/odyssey-horizons.json')
                 document.path=None; document.saved=None
-            editor=CampaignEditor(document,profiles,args.output,audio=Audio(args.volume,args.mute or args.headless),controls_dir=args.controls_dir)
+            editor=CampaignEditor(document,profiles,args.output,audio=Audio(args.volume,args.mute or args.headless),controls_dir=args.controls_dir,language=args.language)
         else:
             document=MapDocument.load(args.map) if args.map else template_document(args.profile)
             classic = profiles['classic']
             editor = LevelEditor(classic['factory'],classic['bindings'],document,args.output,
-                                 analysis_movement=classic['movement'],profiles=profiles,audio=Audio(args.volume,args.mute or args.headless),controls_dir=args.controls_dir)
+                                 analysis_movement=classic['movement'],profiles=profiles,audio=Audio(args.volume,args.mute or args.headless),controls_dir=args.controls_dir,language=args.language)
+        from examples.campaign.locale import CampaignLocale
+        editor.locale.extra=CampaignLocale(args.language).literal
         editor.run(args.frames,args.screenshot)
     except (ValueError,OSError,KeyError,TypeError) as error:
         pygame.quit()

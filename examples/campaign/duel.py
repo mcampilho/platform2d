@@ -146,7 +146,7 @@ class DuelScene(AdventureScene):
         self.text(surface,'PÁTIO DO GUARDIÃO · ESPADA E DEFESA',24,10,(132,229,214))
         self.text(surface,'[J] golpe · manter [L] defesa frontal · bloquear no último instante permite contra-atacar.',24,35)
         count=sum(o['type']=='guardian' for o in self.level.objects)
-        self.text(surface,f'GUARDIÕES {len(self.destroyed)}/{count}   VIDA {self.health.remaining}/5   RESISTÊNCIA',24,62)
+        self.text(surface,self.tr('duel.status','GUARDIÕES {current}/{total}   VIDA {health}/5   RESISTÊNCIA',current=len(self.destroyed),total=count,health=self.health.remaining),24,62)
         pygame.draw.rect(surface,(43,54,71),(570,65,180,10))
         pygame.draw.rect(surface,(132,229,214),(570,65,round(self.sword.stamina*1.8),10))
         if self.inventory_notice_time:

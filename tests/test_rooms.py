@@ -15,7 +15,7 @@ from platform2d.physics.body import Body, Box
 from platform2d.physics.collision import Collider
 from platform2d.physics.platform import MovingPlatform, move_with_platforms
 from platform2d.world.room import RoomWorld
-from platform2d.rendering.transition import FadeTransition
+from platform2d.rendering.transition import FadeTransition,MomentTransitions
 
 ROOT = Path(__file__).resolve().parents[1]
 DT = 1/60
@@ -170,6 +170,16 @@ class TransitionTests(unittest.TestCase):
         fade.update(1)
         self.assertFalse(fade.active)
         self.assertEqual(calls,["entered"])
+
+    def test_moment_cues_finish_and_reduced_effects_suppress_them(self):
+        cues=MomentTransitions()
+        self.assertTrue(cues.enter(.2)); self.assertEqual(cues.kind,'enter')
+        cues.update(.2); self.assertFalse(cues.active)
+        self.assertTrue(cues.checkpoint((30,40),.5)); self.assertEqual(cues.origin,(30,40))
+        surface=pygame.Surface((120,80)); before=surface.copy()
+        cues.draw(surface); self.assertNotEqual(surface.get_at((30,23)),before.get_at((30,23)))
+        cues.enabled=False; cues.clear()
+        self.assertFalse(cues.complete()); self.assertFalse(cues.active)
 
 
 class SceneTests(unittest.TestCase):

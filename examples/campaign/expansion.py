@@ -113,7 +113,9 @@ class ExpansionScene(AdventureScene):
             elif kind=='plate':
                 active=obj['id'] in self.cargo.active(self.player.body)
                 pygame.draw.rect(surface,(119,239,192) if active else (245,192,101),rect)
-                self.text(surface,str(obj.get('weight',2))+' t · '+('ATIVA' if active else 'LIVRE'),r.x-8,r.y-65,(119,239,192) if active else (245,192,101))
+                status='ATIVA' if active else 'LIVRE'
+                locale=getattr(self,'locale',None)
+                self.text(surface,str(obj.get('weight',2))+' t · '+(locale.literal(status) if locale else status),r.x-8,r.y-65,(119,239,192) if active else (245,192,101))
             elif kind=='gate':
                 opened=self.gate_open(obj) or obj['id'] in self.open_gates
                 pygame.draw.rect(surface,(120,225,202) if opened else (230,131,114),rect,2 if opened else 0)
@@ -132,16 +134,16 @@ class ExpansionScene(AdventureScene):
         super().draw(surface,alpha)
         if self.won or self.paused: return
         labels={
-            'cargo':f'CAIXAS · empurra e usa como degraus · placas {len(self.cargo.active())}/{len(self.cargo.plates)} · R: repor caixas',
-            'swim':f'OXIGÉNIO {self.oxygen:04.1f}s · SALTAR / cima: subir · baixo: mergulhar · procura bolsas de AR',
-            'escape':'FUGA · mantém-te à frente da faixa vermelha · checkpoints permitem retomar o percurso',
-            'explore':'SALTO DUPLO · salta, solta e prime SALTAR no ar · regressa à esquerda' if self.ability else 'EXPLORAÇÃO · encontra a capacidade no laboratório e regressa ao átrio'}
+            'cargo':self.tr('exp.cargo','CAIXAS · empurra e usa como degraus · placas {active}/{total} · R: repor caixas',active=len(self.cargo.active()),total=len(self.cargo.plates)),
+            'swim':self.tr('exp.swim','OXIGÉNIO {oxygen}s · SALTAR / cima: subir · baixo: mergulhar · procura bolsas de AR',oxygen=f'{self.oxygen:04.1f}'),
+            'escape':self.tr('exp.escape','FUGA · mantém-te à frente da faixa vermelha · checkpoints permitem retomar o percurso'),
+            'explore':self.tr('exp.explore_ready' if self.ability else 'exp.explore_search','SALTO DUPLO · salta, solta e prime SALTAR no ar · regressa à esquerda' if self.ability else 'EXPLORAÇÃO · encontra a capacidade no laboratório e regressa ao átrio')}
         pygame.draw.rect(surface,(9,17,29),(0,34,960,62))
         self.text(surface,self.level.name,24,38,(137,233,213))
         self.text(surface,labels[self.mode],24,65)
         if self.mode!='escape':
             got=sum(o['id'] in self.collected_items for o in self.coins)
-            self.text(surface,f'CRISTAIS {got}/{len(self.coins)} · VIDA {self.health.remaining}/5',680,38)
+            self.text(surface,self.tr('exp.crystals_health','CRISTAIS {current}/{total} · VIDA {health}/5',current=got,total=len(self.coins),health=self.health.remaining),680,38)
         if self.inventory_notice_time:
             pygame.draw.rect(surface,(12,23,37),(12,520,936,28),border_radius=5)
             self.text(surface,self.inventory_notice,24,527,(249,215,145))
@@ -149,4 +151,4 @@ class ExpansionScene(AdventureScene):
             frontier=min(self.level.width,self.escape_origin+self.escape_time*65)
             edge=round(frontier-self.camera.x)
             if edge>=0: pygame.draw.rect(surface,(224,100,114),(edge,96,12,480))
-            self.text(surface,f'AMEAÇA A {max(0,round(self.player.body.x-frontier))} m',740,38,(255,180,149))
+            self.text(surface,self.tr('exp.threat','AMEAÇA A {distance} m',distance=max(0,round(self.player.body.x-frontier))),740,38,(255,180,149))

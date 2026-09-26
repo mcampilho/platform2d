@@ -50,6 +50,10 @@
     {
       "id": "explore",
       "map": "expansion-explore.json"
+    },
+    {
+      "id": "lost-keys",
+      "map": "willy-keys.json"
     }
   ]
 }

@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "platform2d"
-version = "0.23.0"
+version = "0.24.0"
 readme = "docs/using-platform2d.md"
 license = "MIT AND OFL-1.1"
 license-files = ["LICENSE", "platform2d/fonts/OFL-*.txt"]
@@ -22,6 +22,7 @@ include = ["platform2d*"]
 "platform2d.audio" = ["assets/*.wav"]
 
 "platform2d" = ["starter/*.tmpl", "locales/*.json", "fonts/*.ttf", "fonts/*.otf", "fonts/*.txt", "fonts/*.json", "fonts/*.md"]
+"platform2d.tools" = ["locales/*.json"]
 
 [project.scripts]
 platform2d = "platform2d.__main__:main"

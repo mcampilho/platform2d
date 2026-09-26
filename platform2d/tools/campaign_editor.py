@@ -7,12 +7,12 @@ from .controls_panel import ControlsPanel
 from .editor_model import MapDocument
 
 class CampaignEditor(LevelEditor):
-    def __init__(self,campaign,profiles,default_path='levels/minha-campanha.json',audio=None,controls_dir=None,on_close=None):
+    def __init__(self,campaign,profiles,default_path='levels/minha-campanha.json',audio=None,controls_dir=None,on_close=None,language='pt-PT'):
         self.campaign=campaign; self.stage_index=0; self.scroll=0; self.map_editor=None; self.on_close=on_close
         classic=profiles['classic']
-        super().__init__(classic['factory'],classic['bindings'],profiles=profiles,default_path=default_path,audio=audio,controls_dir=controls_dir)
+        super().__init__(classic['factory'],classic['bindings'],profiles=profiles,default_path=default_path,audio=audio,controls_dir=controls_dir,language=language)
         self.status='Escolhe etapas, organiza a sequência e testa com F5.'
-        pygame.display.set_caption('Platform2D 0.23 — Atelier de Campanhas')
+        pygame.display.set_caption(self.locale.t('editor.campaign_caption'))
 
     def refresh(self):
         self.reports,self.issues=self.campaign.inspect()
@@ -108,8 +108,10 @@ class CampaignEditor(LevelEditor):
         name,ids,docs=self.campaign.playable(self.stage_index if selected else 0)
         profile=self.profiles['campaign']
         self.preview=profile['factory'](name,ids,docs)
+        setter=getattr(self.preview,'set_language',None)
+        if setter: setter(self.language)
         self.preview.audio=self.audio
-        self.controls=ControlsPanel(profile['bindings'],'campaign_editor')
+        self.controls=ControlsPanel(profile['bindings'],'campaign_editor',language=self.language)
         self.preview.format_controls=self.controls.format_hint
         self.preview_input=self.controls.input; self.accumulator=0
         self.status='Teste desde a etapa selecionada.' if selected else 'Teste da campanha completa.'
@@ -123,13 +125,14 @@ class CampaignEditor(LevelEditor):
         path=Path(self.campaign.data['stages'][self.stage_index]['map'])
         doc=MapDocument.load(path)
         classic=self.profiles['classic']
-        self.map_editor=LevelEditor(classic['factory'],classic['bindings'],doc,path,profiles={k:v for k,v in self.profiles.items() if k!='campaign'},audio=self.audio,controls_dir=self.controls_dir)
+        self.map_editor=LevelEditor(classic['factory'],classic['bindings'],doc,path,profiles={k:v for k,v in self.profiles.items() if k!='campaign'},audio=self.audio,controls_dir=self.controls_dir,language=self.language)
+        self.map_editor.locale.extra=getattr(self.locale,'extra',None)
 
     def return_from_map(self):
         def leave():
             if self.map_editor.controls: self.map_editor.stop_preview()
             self.map_editor=None; self.refresh()
-            pygame.display.set_caption('Platform2D 0.23 — Atelier de Campanhas')
+            pygame.display.set_caption(self.locale.t('editor.campaign_caption'))
         if self.map_editor.preview: self.map_editor.stop_preview()
         self.map_editor.protect_unsaved(leave)
 
@@ -205,9 +208,9 @@ class CampaignEditor(LevelEditor):
             self.text('ATELIER / CAMPANHAS',28,24,(130,232,203),self.title)
             for i,(label,callback) in enumerate([('Nova',self.new_dialog),('Abrir',self.open_dialog),('Guardar',self.save),('Guardar como',lambda:self.save(True)),('Desfazer',self.history),('Refazer',lambda:self.history(True))]):
                 self.button(label,(470+i*128,24,120,34),callback)
-            self.text(('● ' if self.campaign.dirty else '✓ ')+self.campaign.data['name'][:67],28,86,(224,237,242),self.title)
+            self.text(('● ' if self.campaign.dirty else '✓ ')+self.locale.literal(self.campaign.data['name'])[:67],28,86,(224,237,242),self.title)
             self.button('Mudar nome',(1065,86,176,34),self.rename_campaign)
-            self.text('ETAPAS · '+str(len(self.reports))+' / 32',28,146,(125,157,180))
+            self.text(self.locale.t('editor.stage_count',count=len(self.reports)),28,146,(125,157,180))
             self.text('A primeira etapa inicia a campanha. Roda para percorrer.',28,172)
             for row,index in enumerate(range(self.scroll,min(len(self.reports),self.scroll+7))):
                 report=self.reports[index]; stage=self.campaign.data['stages'][index]; y=209+row*62
@@ -215,9 +218,9 @@ class CampaignEditor(LevelEditor):
                 pygame.draw.rect(self.screen,color,(28,y,780,54),border_radius=6)
                 self.buttons.append((pygame.Rect(28,y,780,54),lambda index=index:setattr(self,'stage_index',index)))
                 error=any(i.severity=='error' for i in report.issues)
-                self.text(f'{index+1:02}'+(' INÍCIO' if index==0 else ''),40,y+9,(129,226,201))
-                self.text(report.name[:47],134,y+8,(237,222,227) if error else (221,236,241),self.font)
-                self.text(stage['id'][:40]+' · '+PROFILE_NAMES.get(report.profile,report.profile),134,y+32,(147,173,192))
+                self.text(f'{index+1:02}'+(self.locale.literal(' INÍCIO') if index==0 else ''),40,y+9,(129,226,201))
+                self.text(self.locale.literal(report.name)[:47],134,y+8,(237,222,227) if error else (221,236,241),self.font)
+                self.text(stage['id'][:40]+' · '+self.locale.literal(PROFILE_NAMES.get(report.profile,report.profile)),134,y+32,(147,173,192))
                 self.text('ERRO' if error else 'AVISO' if report.issues else 'OK',738,y+18,(245,151,158) if error else (237,204,138))
             if not self.reports: self.wrapped('Adiciona mapas de Combate ou Aventura para criar a tua campanha.',52,256,650)
             for i,(label,callback) in enumerate([('Adicionar mapa',self.add_stage),('Subir',lambda:self.move_stage(self.stage_index-1)),('Descer',lambda:self.move_stage(self.stage_index+1)),('Começar aqui',lambda:self.move_stage(0)),('Trocar mapa',self.replace_stage),('Mudar ID',self.rename_stage),('Editar mapa',self.edit_map),('Retirar etapa',self.remove_stage)]):

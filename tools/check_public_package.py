@@ -30,13 +30,20 @@ def check(path):
         assert not any(p.startswith('.env') or p in {'.pypirc', '.venv', '.git'} for p in parts)
     info = BytesParser().parsebytes(metadata)
     assert info['Name'] == 'platform2d'
-    assert info['Version'] == '0.23.0', 'Update release checker when changing the release version'
+    assert info['Version'] == '0.24.0', 'Update release checker when changing the release version'
     assert info['License-Expression'] == 'MIT AND OFL-1.1'
     assert 'platform2d/__main__.py' in files
     assert any(n.startswith('platform2d/starter/') and n.endswith('.tmpl') for n in files)
+    assert 'platform2d/starter/mygame__theme.json.tmpl' in files
     assert any(n.startswith('platform2d/audio/assets/') and n.endswith('.wav') for n in files)
     assert any(n.endswith('/LICENSE') or n == 'LICENSE' for n in files)
     assert 'platform2d/locales/ar.json' in files
+    assert 'platform2d/rendering/theme.py' in files
+    assert 'platform2d/rendering/sprite_animation.py' in files
+    assert 'platform2d/rendering/camera_effects.py' in files
+    assert 'platform2d/rendering/guidance.py' in files
+    assert 'platform2d/tools/theme_tool.py' in files
+    assert 'platform2d/tools/locales/ar.json' in files
     assert 'platform2d/fonts/NotoSansCJKjp-Regular.otf' in files
     assert 'platform2d/fonts/OFL-Arabic.txt' in files
     print(f'OK: {path.name}: {len(files)} files, version {info["Version"]}, {info["License-Expression"]}')

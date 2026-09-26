@@ -1,8 +1,8 @@
-# Distribuir o motor e o Resgate — fase 0.23
+# Distribuir o motor e o Resgate — fase 0.24
 
 ## Dois públicos, duas distribuições
 
-**Programadores:** `Platform2D-SDK-0.23.0.zip` contém a wheel do motor, código-fonte,
+**Programadores:** `Platform2D-SDK-0.24.0.zip` contém a wheel do motor, código-fonte,
 licença MIT, guias, um projeto mínimo e o código do Resgate. O motor instala-se
 com pip e pode ser usado sem a campanha Aurora. Os exemplos completos da Aurora
 continuam neste repositório de desenvolvimento.
@@ -23,7 +23,7 @@ Extrai o código do jogo numa pasta. Usa Python 3.12 x64 e, com caminhos ajustad
 ```powershell
 py -3.12 -m venv .build-env
 .build-env\Scripts\python.exe -m pip install -r requirements-build.txt
-.build-env\Scripts\python.exe -m pip install "C:\wheels\platform2d-0.23.0-py3-none-any.whl"
+.build-env\Scripts\python.exe -m pip install "C:\wheels\platform2d-0.24.0-py3-none-any.whl"
 .build-env\Scripts\python.exe -m pip install .
 .build-env\Scripts\python.exe build_windows.py --output dist
 ```

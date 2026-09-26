@@ -38,6 +38,32 @@ class DashTests(unittest.TestCase):
         self.assertFalse(a.controller.dash_ready)
         self.assertEqual(a.controller.dash_left,0)
 
+    def test_double_jump_refills_only_after_ground_contact(self):
+        a = actor(0,0,double_jump=True)
+        a.update(DT,inputs(),[])
+        a.controller.coyote=0
+        a.update(DT,inputs('jump',pressed=('jump',)),[])
+        self.assertTrue(a.controller.extra_jump_used)
+        self.assertLess(a.body.vy,0)
+        first=a.body.vy
+        a.update(DT,inputs('jump',pressed=('jump',)),[])
+        self.assertGreater(a.body.vy,first)
+        floor=[Collider(Box(-100,150,400,32))]
+        for _ in range(100): a.update(DT,inputs(),floor)
+        self.assertTrue(a.body.on_ground)
+        a.update(DT,inputs(),floor)
+        self.assertFalse(a.controller.extra_jump_used)
+
+    def test_glide_limits_fall_only_while_held(self):
+        a=actor(0,0,glide=True,glide_fall_speed=90)
+        a.body.vy=400
+        a.update(DT,inputs('glide'),[])
+        self.assertEqual(a.state,'glide')
+        self.assertLessEqual(a.body.vy,90)
+        a.update(DT,inputs(),[])
+        self.assertNotEqual(a.state,'glide')
+        self.assertGreater(a.body.vy,90)
+
     def test_diagonal_has_same_speed_as_horizontal(self):
         straight,diagonal = actor(),actor()
         straight.update(DT,inputs("right",pressed=("dash",)),[])
